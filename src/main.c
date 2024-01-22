@@ -1,9 +1,9 @@
+#include "../include/main.h"
 #include <stdio.h>
+#include <stdlib.h>
 #include <string.h>
 
 #define LINE_SIZE 512
-
-int get_line(char *);
 
 int main(int argc, char *argv[]) {
 
@@ -25,7 +25,7 @@ int main(int argc, char *argv[]) {
     // if it is built-in invoke the command
     // else execute command as an external process
 
-    printf("¥ ");
+    printf("£ "); // ¥
     if (get_line(line) == EOF) {
       printf("exit\n");
       break;
@@ -52,4 +52,34 @@ int get_line(char *line) {
   // remove new line terminator
   line[strcspn(line, "\n")] = '\0';
   return 0;
+}
+
+// logic works, should add token limit condition
+char **input_tok(char *input, int *num_tok) {
+  int buffer = 16;
+  char **tokens = (char **)malloc(buffer * sizeof(char *));
+
+  if (!tokens) {
+    printf("memory allocation failed\n");
+    return NULL;
+  }
+
+  char *token = strtok(input, " ");
+  *num_tok = 0;
+
+  while (token != NULL) {
+    if (*num_tok >= buffer) {
+      buffer <<= 1;
+      tokens = realloc(tokens, buffer * sizeof(char *));
+      if (!tokens) {
+        free(tokens);
+        printf("memory allocation failed\n");
+        return NULL;
+      }
+    }
+    tokens[*num_tok] = token;
+    (*num_tok)++;
+    token = strtok(NULL, " ");
+  }
+  return tokens;
 }
