@@ -16,6 +16,7 @@ int main(int argc, char *argv[]) {
 
   char line[LINE_SIZE];
 
+  printf("shimple shell- inishialished\n");
   for (;;) {
 
     // print prompt
@@ -25,7 +26,7 @@ int main(int argc, char *argv[]) {
     // if it is built-in invoke the command
     // else execute command as an external process
 
-    printf("£ "); // ¥
+    printf("₪ "); // ¥
     if (get_line(line) == EOF) {
       printf("exit\n");
       break;
