@@ -11,6 +11,7 @@
 int main(int argc, char *argv[]) {
 
   // get home directory
+
   // set home directory
   // save the current path
   // load history
@@ -37,6 +38,11 @@ int main(int argc, char *argv[]) {
     int numtok = 0;
     char **command = input_tok(line, &numtok);
 
+    // built in commands
+    if (strcmp(command[0], "exit") == 0) {
+      break;
+    }
+
     pid_t pid = fork();
 
     if (pid < 0) {
@@ -47,11 +53,6 @@ int main(int argc, char *argv[]) {
       exit(1);
     } else {
       wait(NULL);
-    }
-
-    // compare if command is exit
-    if (strcmp(line, "exit") == 0) {
-      break;
     }
   }
 
