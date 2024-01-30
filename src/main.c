@@ -31,6 +31,12 @@ int main(int argc, char *argv[]) {
       printf("exit\n");
       break;
     }
+    int numtok = 0;
+    char **tok = input_tok(line, &numtok);
+
+    // for (int i = 0; i < numtok; i++) {
+    //   printf("%s\n", tok[i]);
+    // }
 
     // compare if command is exit
     if (strcmp(line, "exit") == 0) {
@@ -59,13 +65,14 @@ int get_line(char *line) {
 char **input_tok(char *input, int *num_tok) {
   int buffer = 16;
   char **tokens = (char **)malloc(buffer * sizeof(char *));
+  const char delim[] = " \t\n|><&;";
 
   if (!tokens) {
     printf("memory allocation failed\n");
     return NULL;
   }
 
-  char *token = strtok(input, " ");
+  char *token = strtok(input, delim);
   *num_tok = 0;
 
   while (token != NULL) {
@@ -80,7 +87,7 @@ char **input_tok(char *input, int *num_tok) {
     }
     tokens[*num_tok] = token;
     (*num_tok)++;
-    token = strtok(NULL, " ");
+    token = strtok(NULL, delim);
   }
   return tokens;
 }
