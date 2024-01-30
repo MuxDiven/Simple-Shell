@@ -7,14 +7,12 @@
 #define LINE_SIZE 512
 
 int main(int argc, char *argv[]) {
-
-  // get home directory
-
-  // set home directory
-  // save the current path
+	
+  char* originalPATH = getenv("PATH"); // save the current path
+  chdir(getenv("HOME")); // set home directory
+  
   // load history
   // load alias
-  //
 
   char line[LINE_SIZE];
 
@@ -30,7 +28,7 @@ int main(int argc, char *argv[]) {
 
     printf("₪ "); // ¥
     if (get_line(line) == EOF) {
-      printf("exit\n");
+      printf("exit\n");  
       break;
     }
     int numtok = 0;
@@ -42,6 +40,7 @@ int main(int argc, char *argv[]) {
 
     // built in commands
     if (strcmp(command[0], "exit") == 0) {
+	  putenv(originalPATH);
       break;
     }
 
