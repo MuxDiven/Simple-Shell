@@ -2,8 +2,6 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
-#include <sys/_types/_pid_t.h>
-#include <sys/wait.h>
 #include <unistd.h>
 
 #define LINE_SIZE 512
@@ -38,6 +36,10 @@ int main(int argc, char *argv[]) {
     int numtok = 0;
     char **command = input_tok(line, &numtok);
 
+    if (numtok == 0) {
+      continue;
+    }
+
     // built in commands
     if (strcmp(command[0], "exit") == 0) {
       break;
@@ -46,7 +48,7 @@ int main(int argc, char *argv[]) {
     pid_t pid = fork();
 
     if (pid < 0) {
-      printf("oof!\n");
+      printf("Error spawning child process\n");
     } else if (pid == 0) {
       execvp(command[0], command);
       perror(command[0]);
