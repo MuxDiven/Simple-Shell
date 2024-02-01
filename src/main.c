@@ -27,7 +27,7 @@ int main(int argc, char *argv[]) {
     // if it is built-in invoke the command
     // else execute command as an external process
 
-    printf("₪ "); // ¥
+    printf("₪ "); 
     if (get_line(line) == EOF) {
       printf("exit\n");
       break;
@@ -43,7 +43,7 @@ int main(int argc, char *argv[]) {
     if (strcmp(command[0], "exit") == 0) {
       break;
     } else if (strcmp(command[0], "cd") == 0) {
-      int failure = cd(command); // runs cd command from built-ins.h
+      int failure = cd(command, numtok); // runs cd command from built-ins.h
       continue;
     } else if (strcmp(command[0], "getpath") == 0) {
       int failure = getpath(command);
