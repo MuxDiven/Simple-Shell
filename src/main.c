@@ -1,4 +1,5 @@
 #include "../include/main.h"
+#include "../include/built-ins.h"
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
@@ -7,10 +8,10 @@
 #define LINE_SIZE 512
 
 int main(int argc, char *argv[]) {
-	
-  char* originalPATH = getenv("PATH"); // save the current path
-  chdir(getenv("HOME")); // set home directory
-  
+
+  char *originalPATH = getenv("PATH"); // save the current path
+  chdir(getenv("HOME"));               // set home directory
+
   // load history
   // load alias
 
@@ -28,7 +29,7 @@ int main(int argc, char *argv[]) {
 
     printf("₪ "); // ¥
     if (get_line(line) == EOF) {
-      printf("exit\n");  
+      printf("exit\n");
       break;
     }
     int numtok = 0;
@@ -40,8 +41,16 @@ int main(int argc, char *argv[]) {
 
     // built in commands
     if (strcmp(command[0], "exit") == 0) {
-	  putenv(originalPATH);
       break;
+    } else if (strcmp(command[0], "cd") == 0) {
+      int failure = cd(command); // runs cd command from built-ins.h
+      continue;
+    } else if (strcmp(command[0], "getpath") == 0) {
+      int failure = getpath(command);
+      continue;
+    } else if (strcmp(command[0], "setpath") == 0) {
+      int failure = setpath(command);
+      continue;
     }
 
     pid_t pid = fork();
