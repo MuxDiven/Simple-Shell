@@ -3,6 +3,8 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
+#include <sys/types.h>
+#include <sys/wait.h>
 #include <unistd.h>
 
 #define LINE_SIZE 512
@@ -27,7 +29,7 @@ int main(int argc, char *argv[]) {
     // if it is built-in invoke the command
     // else execute command as an external process
 
-    printf("₪ "); 
+    printf("₪ ");
     if (get_line(line) == EOF) {
       printf("exit\n");
       break;
