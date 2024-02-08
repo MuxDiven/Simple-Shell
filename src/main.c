@@ -51,7 +51,7 @@ int main(int argc, char *argv[]) {
       int failure = getpath(command);
       continue;
     } else if (strcmp(command[0], "setpath") == 0) {
-      int failure = setpath(command);
+      int failure = setpath(command, numtok);
       continue;
     }
 
