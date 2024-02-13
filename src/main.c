@@ -27,6 +27,7 @@ int main(int argc, char *argv[]) {
     // get user input
     // parse & tokenize
     // while history condition thing
+    // while alias condition thing
     // if it is built-in invoke the command
     // else execute command as an external process
 
@@ -67,6 +68,8 @@ int main(int argc, char *argv[]) {
     } else {
       wait(NULL);
     }
+
+    free_tokens(command);
   }
 
   // save history

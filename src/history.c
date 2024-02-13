@@ -1,6 +1,8 @@
 #include "../include/history.h"
 #include <stdlib.h>
 
+history history_db;
+
 history *allocate_history() {
   history *h = (history *)malloc(sizeof(history));
   h->previous_commands = (Tokens *)malloc(sizeof(Tokens) * HISTORY_SIZE);
