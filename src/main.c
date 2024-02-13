@@ -36,7 +36,7 @@ int main(int argc, char *argv[]) {
       break;
     }
     int numtok = 0;
-    char **command = input_tok(line, &numtok);
+    Tokens command = input_tok(line, &numtok);
 
     if (numtok == 0) {
       continue;

@@ -3,8 +3,8 @@
 #include <stdlib.h>
 #include <string.h>
 
-char **copy_tokens(char **tokens, const int num_tokens) {
-  char **copy = (char **)malloc(sizeof(char *) * num_tokens);
+Tokens copy_tokens(Tokens tokens, const int num_tokens) {
+  Tokens copy = (char **)malloc(sizeof(char *) * num_tokens);
   for (int i = 0; i < num_tokens; i++) {
     copy[i] = malloc(sizeof(tokens[i]));
     if (!copy[i]) {
@@ -17,7 +17,7 @@ char **copy_tokens(char **tokens, const int num_tokens) {
   return copy;
 }
 
-void free_tokens(char **tokens, const int num_tokens) {
+void free_tokens(Tokens tokens, const int num_tokens) {
   for (int i = 0; i < num_tokens; i++) {
     free(tokens[i]);
     tokens[i] = NULL;
@@ -27,13 +27,13 @@ void free_tokens(char **tokens, const int num_tokens) {
 }
 
 // logic works, should add token limit condition
-char **input_tok(char *line, int *num_tok) {
+Tokens input_tok(char *line, int *num_tok) {
 
   char *input = malloc(strlen(line) * sizeof(char));
   strcpy(input, line);
 
   int buffer = 16;
-  char **tokens = (char **)malloc(buffer * sizeof(char *));
+  Tokens tokens = (char **)malloc(buffer * sizeof(char *));
   const char delim[] = " \t\n|><&;";
 
   if (!tokens) {
