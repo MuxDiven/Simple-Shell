@@ -3,6 +3,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 
+
 History allocate_history() {
   History h = (History)malloc(sizeof(History));
   h->previous_commands = (Tokens *)malloc(sizeof(Tokens) * HISTORY_SIZE);
@@ -18,11 +19,11 @@ void add_history(History history, Tokens tokens,
     history->index -= history->size;
   }
   if (history->previous_commands[history->index] == NULL) {
-    history->previous_commands[history->index] = copy_tokens(tokens, num_tok);
+    history->previous_commands[history->index] = copy_tokens(tokens);
     history->index++;
   } else {
     free_tokens(tokens, num_tok); // i dont think this works but ill be back
-    history->previous_commands[history->index] = copy_tokens(tokens, num_tok);
+    history->previous_commands[history->index] = copy_tokens(tokens);
     history->index++;
   }
 }

@@ -3,9 +3,26 @@
 #include <stdlib.h>
 #include <string.h>
 
-Tokens copy_tokens(Tokens tokens, const int num_tokens) {
-  Tokens copy = (char **)malloc(sizeof(char *) * num_tokens);
-  for (int i = 0; i < num_tokens; i++) {
+Tokens copy_tokens(Tokens tokens) {
+
+  int buffer = 4;
+  Tokens copy = (Tokens)malloc(buffer * sizeof(char *));
+
+  if (!copy) {
+    printf("memory allocation failed\n");
+    return NULL;
+  }
+
+  for (int i = 0; tokens[i] != NULL; i++) {
+    if (i >= buffer) {
+      buffer <<= 1;
+      copy = realloc(copy, buffer * sizeof(char *));
+      if (!copy) {
+        free(copy);
+        printf("memory allocation failed\n");
+        return NULL;
+      }
+    }
     copy[i] = malloc(sizeof(tokens[i]));
     if (!copy[i]) {
       free(copy);
@@ -17,20 +34,13 @@ Tokens copy_tokens(Tokens tokens, const int num_tokens) {
   return copy;
 }
 
-void free_tokens(Tokens tokens, const int num_tokens) {
-  for (int i = 0; i < num_tokens; i++) {
-    free(tokens[i]);
-    tokens[i] = NULL;
-  }
+void free_tokens(Tokens tokens) {
   free(tokens);
   tokens = NULL;
 }
 
 // logic works, should add token limit condition
-Tokens input_tok(char *line, int *num_tok) {
-
-  char *input = malloc(strlen(line) * sizeof(char));
-  strcpy(input, line);
+Tokens input_tok(char *input, int *num_tok) {
 
   int buffer = 16;
   Tokens tokens = (char **)malloc(buffer * sizeof(char *));
