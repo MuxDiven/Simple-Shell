@@ -1,5 +1,6 @@
 #include "../include/main.h"
 #include "../include/built-ins.h"
+#include "../include/utils.h"
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
@@ -83,35 +84,4 @@ int get_line(char *line) {
   // remove new line terminator
   line[strcspn(line, "\n")] = '\0';
   return 0;
-}
-
-// logic works, should add token limit condition
-char **input_tok(char *input, int *num_tok) {
-  int buffer = 16;
-  char **tokens = (char **)malloc(buffer * sizeof(char *));
-  const char delim[] = " \t\n|><&;";
-
-  if (!tokens) {
-    printf("memory allocation failed\n");
-    return NULL;
-  }
-
-  char *token = strtok(input, delim);
-  *num_tok = 0;
-
-  while (token != NULL) {
-    if (*num_tok >= buffer) {
-      buffer <<= 1;
-      tokens = realloc(tokens, buffer * sizeof(char *));
-      if (!tokens) {
-        free(tokens);
-        printf("memory allocation failed\n");
-        return NULL;
-      }
-    }
-    tokens[*num_tok] = token;
-    (*num_tok)++;
-    token = strtok(NULL, delim);
-  }
-  return tokens;
 }
