@@ -1,10 +1,19 @@
+#include "../include/utils.h"
 
-/* char **command = input_tok(line, &numtok); */
+#define HISTORY_SIZE 20
 
 typedef struct h {
-  char **previous_commands[20];
+  Tokens *previous_commands;
   int index;
   int size;
 } history;
 
 history *allocate_history();
+
+history load_history();
+
+void add_history(Tokens tokens);
+
+void save_history();
+
+Tokens get_history(int index);
