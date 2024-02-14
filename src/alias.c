@@ -15,6 +15,11 @@ alias *new_alias(char *key, Tokens command, int num_tok) {
   return a;
 }
 
+void del_alias(alias *tail) {
+  free(tail);
+  tail = NULL;
+}
+
 void allocate_aliases() {
   Aliases aliases = malloc(sizeof(Aliases));
   *aliases = NULL;
@@ -30,6 +35,10 @@ int add_alias(Aliases aliases, char *key, Tokens args, int num_tok) {
   } else {
     head = *aliases;
     while (head->next) {
+      if (strcmp(head->key, key) == 0) {
+        head->command = args;
+        return 0;
+      }
       head = head->next;
     }
     head->next = temp;

@@ -16,4 +16,4 @@ int is_alias(Aliases aliases, char *key);
 int load_alias();
 Tokens get_command(Aliases aliases, char *key);
 alias rem_alias(Aliases aliases, char *key);
-void del_alias(Aliases aliases, char *key);
+void del_alias(alias *tail);
