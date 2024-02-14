@@ -1,5 +1,6 @@
 #include "../include/main.h"
 #include "../include/built-ins.h"
+#include "../include/history.h"
 #include "../include/utils.h"
 #include <stdio.h>
 #include <stdlib.h>
@@ -20,6 +21,8 @@ int main(int argc, char *argv[]) {
 
   char line[LINE_SIZE];
 
+  History history = allocate_history();
+
   printf("shimple shell- inishialished\n");
   for (;;) {
 
@@ -27,6 +30,7 @@ int main(int argc, char *argv[]) {
     // get user input
     // parse & tokenize
     // while history condition thing
+    // while alias condition thing
     // if it is built-in invoke the command
     // else execute command as an external process
 
@@ -42,6 +46,23 @@ int main(int argc, char *argv[]) {
       continue;
     }
 
+    // history commands
+    if (command[0][0] == '!') {
+      printf("History command invoked\n");
+      if (strlen(command[0]) > 1) {
+        if (command[0][1] == '-') {
+          printf("User entered !-?\n");
+          // user entered !-
+        } else if (command[0][1] == '!') {
+          printf("User entered !!\n");
+          // user entered !!
+        }
+        // Tokens command = get_history(command[0][1]);
+      }
+    }
+
+    add_history(history, command, numtok);
+
     // built in commands
     if (strcmp(command[0], "exit") == 0) {
       break;
@@ -53,6 +74,9 @@ int main(int argc, char *argv[]) {
       continue;
     } else if (strcmp(command[0], "setpath") == 0) {
       int failure = setpath(command, numtok);
+      continue;
+    } else if (strcmp(command[0], "history") == 0) {
+      show_history(history);
       continue;
     }
 
@@ -67,6 +91,8 @@ int main(int argc, char *argv[]) {
     } else {
       wait(NULL);
     }
+
+    free_tokens(command);
   }
 
   // save history

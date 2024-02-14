@@ -1,10 +1,11 @@
 #include "../include/built-ins.h"
+#include "../include/utils.h"
 #include <stdio.h>
 #include <stdlib.h>
 #include <unistd.h>
 
-int cd(char **args, int ntokens) {
-  if (ntokens == 1) { // checks if cd has any arguments
+int cd(Tokens args, int num_tokens) {
+  if (num_tokens == 1) { // checks if cd has any arguments
     if (chdir(getenv("HOME")) ==
         -1) { // changes working directory to home directory
       perror(getenv("HOME"));
@@ -18,12 +19,12 @@ int cd(char **args, int ntokens) {
   }
   return 0;
 }
-int getpath(char **args) {
+int getpath(Tokens args) {
   printf("%s\n", getenv("PATH"));
   return 0;
 }
-int setpath(char **args, int ntokens) {
-  if (ntokens == 1) {
+int setpath(Tokens args, int num_tokens) {
+  if (num_tokens == 1) {
     printf("Error: No path provided\n");
     return 1;
   }

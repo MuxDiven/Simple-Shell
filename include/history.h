@@ -2,18 +2,22 @@
 
 #define HISTORY_SIZE 20
 
-typedef struct h {
+struct h {
   Tokens *previous_commands;
   int index;
   int size;
-} history;
+};
 
-history *allocate_history();
+typedef struct h *History;
 
-history load_history();
+History allocate_history();
 
-void add_history(Tokens tokens);
+void add_history(History history, Tokens tokens, int num_tok);
 
-void save_history();
+Tokens get_history(History history, int index);
 
-Tokens get_history(int index);
+void show_history(History history);
+
+void save_history(History history);
+
+History load_history(History history);
