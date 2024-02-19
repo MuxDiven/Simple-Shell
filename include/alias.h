@@ -9,11 +9,13 @@ typedef struct alias {
 typedef struct alias **Aliases;
 
 void allocate_aliases(); // init
-alias *new_alias(char *key, Tokens command, int num_tok);
-int add_alias(Aliases aliases, char *key, Tokens args, int num_tok);
+alias *new_alias(char *key, Tokens command);
+int add_alias(Aliases aliases, char *key, Tokens args);
 int save_alias(Aliases aliases, char *key, char *filename);
 int is_alias(Aliases aliases, char *key);
 int load_alias();
+int is_alias(Aliases aliases, char *key);
 Tokens get_command(Aliases aliases, char *key);
-alias rem_alias(Aliases aliases, char *key);
+alias *rem_alias(Aliases aliases, char *key);
+int rem_at(Aliases aliases, char *key);
 void del_alias(alias *tail);
