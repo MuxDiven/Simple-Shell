@@ -43,6 +43,7 @@ int main(int argc, char *argv[]) {
     }
     int numtok = 0;
     Tokens command = input_tok(line, &numtok);
+    printf("%s\n", tokens_to_string(command));
 
     if (numtok == 0) {
       continue;

@@ -79,3 +79,12 @@ void replace_with_alias(char *token_to_replace, Tokens replace_with) {
 
   token_to_replace = replace_with[0];
 }
+
+char *tokens_to_string(Tokens tokens) {
+  char *line = (char *)malloc(512 * sizeof(char));
+
+  for (int i = 0; tokens[i] != NULL; i++) {
+    strcat(i == 0 ? line : strcat(line, " "), tokens[i]);
+  }
+  return line;
+}
