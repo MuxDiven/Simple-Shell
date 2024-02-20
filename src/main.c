@@ -1,4 +1,5 @@
 #include "../include/main.h"
+#include "../include/alias.h"
 #include "../include/built-ins.h"
 #include "../include/history.h"
 #include "../include/utils.h"
@@ -22,6 +23,7 @@ int main(int argc, char *argv[]) {
   char line[LINE_SIZE];
 
   History history = allocate_history();
+  Aliases aliases = allocate_aliases();
 
   printf("shimple shell- inishialished\n");
   for (;;) {
@@ -62,6 +64,8 @@ int main(int argc, char *argv[]) {
     }
 
     add_history(history, command, numtok);
+
+    // aliases
 
     // built in commands
     if (strcmp(command[0], "exit") == 0) {

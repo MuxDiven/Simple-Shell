@@ -70,3 +70,12 @@ Tokens input_tok(char *input, int *num_tok) {
   }
   return tokens;
 }
+
+void replace_with_alias(char *token_to_replace, Tokens replace_with) {
+
+  Tokens copy_of_tokens = copy_tokens(replace_with);
+
+  free(token_to_replace);
+
+  token_to_replace = replace_with[0];
+}

@@ -21,9 +21,10 @@ void del_alias(alias *tail) {
   tail = NULL;
 }
 
-void allocate_aliases() {
+Aliases allocate_aliases() {
   Aliases aliases = malloc(sizeof(Aliases));
   *aliases = NULL;
+  return aliases;
 }
 
 int add_alias(Aliases aliases, char *key, Tokens args) {
@@ -48,7 +49,7 @@ int add_alias(Aliases aliases, char *key, Tokens args) {
   return 1;
 }
 
-Tokens get_command(Aliases aliases, char *key) {
+Tokens get_alias_command(Aliases aliases, char *key) {
   alias *head = *aliases;
   for (head; head != NULL; head = head->next) {
     if (strcmp(head->key, key) == 0) {
@@ -77,9 +78,9 @@ int rem_at(Aliases aliases, char *key) {
     alias *head = *aliases;
     while (head->next) {
       if (strcmp(head->next->key, key) == 0) {
-        alias *afterHead = head->next->next;
+        alias *after2Head = head->next->next;
         del_alias(head->next);
-        head->next = afterHead;
+        head->next = after2Head;
         return 1;
       }
       head = head->next;
@@ -87,6 +88,18 @@ int rem_at(Aliases aliases, char *key) {
     if (strcmp(head->key, key) == 0) {
       del_alias(head);
       return 1;
+    }
+  }
+  return 0;
+}
+
+int check_for_alias(Aliases aliases, Tokens tokens) {
+
+  for (int i = 0; tokens[i] != NULL; i++) {
+    Tokens alias_command = get_alias_command(aliases, tokens[i]);
+    if (alias_command) {
+      // there is a alias to have
+      replace_with_alias(tokens[i], alias_command);
     }
   }
   return 0;
