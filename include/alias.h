@@ -21,3 +21,4 @@ int rem_at(Aliases aliases, char *key);
 void del_alias(alias *tail);
 
 int check_for_alias(Aliases aliases, Tokens tokens);
+int alias_transform(Aliases, Tokens *tokens, int *num_tokens);

@@ -43,7 +43,9 @@ int main(int argc, char *argv[]) {
     }
     int numtok = 0;
     Tokens command = input_tok(line, &numtok);
-    printf("%s\n", tokens_to_string(command));
+    // TODO: MAKE SURE THIS IS IN THE RIGHT PLACE
+    // IT ALSO NEEDS TO BE RECURSIVE
+    alias_transform(aliases, &command, &numtok);
 
     if (numtok == 0) {
       continue;

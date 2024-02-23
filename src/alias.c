@@ -93,14 +93,39 @@ int rem_at(Aliases aliases, char *key) {
   return 0;
 }
 
-int check_for_alias(Aliases aliases, Tokens tokens) {
+int alias_transform(Aliases aliases, Tokens *tokens, int *num_tokens) {
 
-  for (int i = 0; tokens[i] != NULL; i++) {
-    Tokens alias_command = get_alias_command(aliases, tokens[i]);
+  int j = 0;
+  int original_num = *num_tokens;
+
+  for (int i = 0; i < original_num; i++) {
+    Tokens alias_command = get_alias_command(aliases, (*tokens)[i + j]);
+
     if (alias_command) {
-      // there is a alias to have
-      replace_with_alias(tokens[i], alias_command);
+      int num_alias_tokens = 0;
+      while (alias_command[num_alias_tokens] != NULL) {
+        num_alias_tokens++;
+      }
+      *num_tokens += (num_alias_tokens - 1);
+
+      // we need to resize the original to have engouh space
+      *tokens =
+          (Tokens)realloc((*tokens), ((*num_tokens) * sizeof(char *)) + 1);
+
+      // then memmve it allong num_alias_tokens
+      memmove(*tokens + (i + j) + (num_alias_tokens - 1), *tokens + (i + j),
+              (*num_tokens - (num_alias_tokens - 1) - (i + j)) *
+                  sizeof(char *));
+
+      // then cpy in everything
+      for (int k = 0; alias_command[k] != NULL; k++) {
+        (*tokens)[i + j + k] = (char *)malloc(sizeof(alias_command[k]));
+        strcpy((*tokens)[i + j + k], alias_command[k]);
+      }
+
+      j += num_alias_tokens - 1;
     }
   }
+
   return 0;
 }
