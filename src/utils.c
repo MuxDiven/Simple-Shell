@@ -16,14 +16,14 @@ Tokens copy_tokens(Tokens tokens) {
   for (int i = 0; tokens[i] != NULL; i++) {
     if (i >= buffer) {
       buffer <<= 1;
-      copy = realloc(copy, buffer * sizeof(char *));
+      copy = (Tokens)realloc(copy, buffer * sizeof(char *));
       if (!copy) {
         free(copy);
         printf("memory allocation failed\n");
         return NULL;
       }
     }
-    copy[i] = malloc(sizeof(tokens[i]));
+    copy[i] = (char *)malloc((strlen(tokens[i]) + 1) * sizeof(char));
     if (!copy[i]) {
       free(copy);
       printf("memory allocation failed\n");
@@ -69,4 +69,13 @@ Tokens input_tok(char *input, int *num_tok) {
     token = strtok(NULL, delim);
   }
   return tokens;
+}
+
+char *tokens_to_string(Tokens tokens) {
+  char *line = (char *)malloc(512 * sizeof(char));
+
+  for (int i = 0; tokens[i] != NULL; i++) {
+    strcat(i == 0 ? line : strcat(line, " "), tokens[i]);
+  }
+  return line;
 }

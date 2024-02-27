@@ -61,7 +61,7 @@ int main(int argc, char *argv[]) {
       }
     }
 
-    add_history(history, command, numtok);
+    add_history(history, command);
 
     // built in commands
     if (strcmp(command[0], "exit") == 0) {

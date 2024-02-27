@@ -5,6 +5,7 @@
 struct h {
   Tokens *previous_commands;
   int index;
+  int counter;
   int size;
 };
 
@@ -12,7 +13,7 @@ typedef struct h *History;
 
 History allocate_history();
 
-void add_history(History history, Tokens tokens, int num_tok);
+void add_history(History history, Tokens tokens);
 
 Tokens get_history(History history, int index);
 
