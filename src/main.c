@@ -21,7 +21,11 @@ int main(int argc, char *argv[]) {
 
   char line[LINE_SIZE];
 
-  History history = allocate_history();
+  char *history_filepath =
+      malloc(strlen(getenv("HOME")) + strlen("/.hist_list") + 1);
+  history_filepath = strcpy(history_filepath, getenv("HOME"));
+  history_filepath = strcat(history_filepath, "/hist_list");
+  History history = load_history(history_filepath);
 
   printf("shimple shell- inishialished\n");
   for (;;) {
@@ -94,6 +98,8 @@ int main(int argc, char *argv[]) {
 
     free_tokens(command);
   }
+
+  save_history(history, history_filepath);
 
   // save history
   // save alias
