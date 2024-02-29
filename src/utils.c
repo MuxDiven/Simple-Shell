@@ -6,7 +6,7 @@
 Tokens copy_tokens(Tokens tokens) {
 
   int buffer = 4;
-  Tokens copy = (Tokens)malloc(buffer * sizeof(char *));
+  Tokens copy = (Tokens)malloc((buffer * sizeof(char *)) + 1);
 
   if (!copy) {
     printf("memory allocation failed\n");
@@ -16,7 +16,7 @@ Tokens copy_tokens(Tokens tokens) {
   for (int i = 0; tokens[i] != NULL; i++) {
     if (i >= buffer) {
       buffer <<= 1;
-      copy = (Tokens)realloc(copy, buffer * sizeof(char *));
+      copy = (Tokens)realloc(copy, (buffer * sizeof(char *)) + 1);
       if (!copy) {
         free(copy);
         printf("memory allocation failed\n");

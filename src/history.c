@@ -8,8 +8,8 @@ History allocate_history() {
   History h = (History)malloc(sizeof(struct h));
   h->previous_commands = (Tokens *)malloc(sizeof(Tokens) * HISTORY_SIZE);
   h->index = 0;
-  h->counter = 0;
   h->size = HISTORY_SIZE;
+  h->count = 0;
 
   return h;
 }
@@ -23,7 +23,7 @@ void add_history(History history,
     history->previous_commands[history->index] = copy_tokens(tokens);
   }
   history->index++;
-  history->counter++;
+  history->count++;
   if (history->index == history->size) {
     history->index = 0;
   }
@@ -48,8 +48,56 @@ void show_history(History history) {
   }
 }
 
-void save_history(
-    History history); // save history from instance of struct into file
+// of history struct
+int save_history(History h, char *filepath) {
+  FILE *fptr = fopen(filepath, "w");
+  if (!fptr) {
+    return 0;
+  }
 
-History load_history(History history); // load history from file into instance
-                                       // of history struct
+  for (int i = h->index, j = 0; j < 20; i = (i + 1) % h->size, j++) {
+    if (h->previous_commands[i] != NULL) {
+      fprintf(fptr, "%s\n", tokens_to_string(h->previous_commands[i]));
+    }
+  }
+  fclose(fptr);
+  return 1;
+
+} // save history from instance of struct into file
+//
+// load history from file into instance of history struct
+History load_history(char *filepath) {
+
+  FILE *fptr = fopen(filepath, "r");
+  History h = allocate_history();
+
+  if (!fptr) {
+    return h;
+  }
+
+  int c = 1;
+  int b_size = 16;
+
+  while (c > 0) {
+
+    char *buffer = malloc(sizeof(char) * b_size);
+    int i = 0;
+
+    while ((c = fgetc(fptr)) != '\n' && c > 0) {
+      if (i == b_size) {
+        b_size += b_size;
+        buffer = realloc(buffer, b_size);
+      }
+      buffer[i++] = c;
+    }
+    if (c > 0) {
+      buffer[i++] = 0;
+      int num_tokens = 0;
+      Tokens tokens = input_tok(buffer, &num_tokens);
+      add_history(h, tokens);
+    }
+  }
+
+  fclose(fptr);
+  return h;
+}
