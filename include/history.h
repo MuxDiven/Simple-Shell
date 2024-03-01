@@ -18,6 +18,7 @@ void add_history(History history, Tokens tokens);
 Tokens get_history(History history, int index);
 
 void show_history(History history);
+void free_history(History *history);
 
 int save_history(History history, char *filepath);
 

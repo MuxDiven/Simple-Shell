@@ -35,7 +35,9 @@ void show_history(History history) {
   int j = history->index;
   if (history->previous_commands[history->index + 1] != NULL) {
     for (int i = 0; i < 20; i++) {
-      printf("%d %s\n", i + 1, tokens_to_string(history->previous_commands[j]));
+      char *line = tokens_to_string(history->previous_commands[j]);
+      printf("%d %s\n", i + 1, line);
+      free(line);
       j++;
       if (j == 20) {
         j = 0;
@@ -43,9 +45,22 @@ void show_history(History history) {
     }
   } else {
     for (int i = 0; i < history->index; i++) {
-      printf("%d %s\n", i + 1, tokens_to_string(history->previous_commands[i]));
+      char *line = tokens_to_string(history->previous_commands[i]);
+      printf("%d %s\n", i + 1, line);
+      free(line);
     }
   }
+}
+
+void free_history(History *history) {
+
+  for (int i = 0; (*history)->previous_commands[i] != NULL; i++) {
+    free_tokens((*history)->previous_commands[i]);
+    (*history)->previous_commands[i] = NULL;
+  }
+
+  free(*history);
+  *history = NULL;
 }
 
 // of history struct
@@ -68,8 +83,9 @@ int save_history(History h, char *filepath) {
 // load history from file into instance of history struct
 History load_history(char *filepath) {
 
-  FILE *fptr = fopen(filepath, "r");
   History h = allocate_history();
+
+  FILE *fptr = fopen(filepath, "r");
 
   if (!fptr) {
     return h;
@@ -95,7 +111,9 @@ History load_history(char *filepath) {
       int num_tokens = 0;
       Tokens tokens = input_tok(buffer, &num_tokens);
       add_history(h, tokens);
+      free_tokens(tokens);
     }
+    free(buffer);
   }
 
   fclose(fptr);
