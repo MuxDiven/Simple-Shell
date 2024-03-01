@@ -21,15 +21,11 @@ int main(int argc, char *argv[]) {
 
   char line[LINE_SIZE];
 
-  // COMMENTING OUT ALL OF THIS FOR TESTING
-  // char *history_filepath =
-  //     malloc(strlen(getenv("HOME")) + strlen("/.hist_list") + 1);
-  // history_filepath = strcpy(history_filepath, getenv("HOME"));
-  // history_filepath = strcat(history_filepath, "/.hist_list");
-  // History history = load_history(history_filepath);
-
-  // THIS IS NOT REAL, BELOW ME
-  History history = allocate_history();
+  char *history_filepath =
+      malloc(strlen(getenv("HOME")) + strlen("/.hist_list") + 1);
+  history_filepath = strcpy(history_filepath, getenv("HOME"));
+  history_filepath = strcat(history_filepath, "/.hist_list");
+  History history = load_history(history_filepath);
 
   printf("shimple shell- inishialished\n");
   for (;;) {
@@ -67,7 +63,7 @@ int main(int argc, char *argv[]) {
           printf("User entered !!\n");
           // user entered !!
         }
-        if (command[0][2] != NULL) {
+        if (command[0][2] != 0) {
           char a[2];
           char b[2];
           sprintf(a, "%d", command[0][1] - 48);
@@ -122,10 +118,8 @@ int main(int argc, char *argv[]) {
   }
 
   // save history
-
-  // COMMENTING OUT NEXT 2 LINES BECAUSE ITS MESSING UP THE TESTING
-  // save_history(history, history_filepath);
-  // free_history(&history);
+  save_history(history, history_filepath);
+  free_history(&history);
   // save alias
   // restore original path
   // exit
