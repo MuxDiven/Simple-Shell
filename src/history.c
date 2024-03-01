@@ -46,9 +46,14 @@ void show_history(History history) {
   int j = history->index;
   if (history->previous_commands[history->index + 1] != NULL) {
     for (int i = 0; i < 20; i++) {
-      char *line = tokens_to_string(history->previous_commands[j]);
-      printf("%d %s\n", i + 1, line);
-      free(line);
+      printf("%d ", i + 1);
+      for (int k = 0; history->previous_commands[j][k] != NULL; k++) {
+        printf("%s", history->previous_commands[j][k]);
+      }
+      printf("\n");
+      // char *line = tokens_to_string(history->previous_commands[j]);
+      // printf("%d %s\n", i + 1, line);
+      // free(line);
       j++;
       if (j == 20) {
         j = 0;
@@ -56,9 +61,14 @@ void show_history(History history) {
     }
   } else {
     for (int i = 0; i < history->index; i++) {
-      char *line = tokens_to_string(history->previous_commands[i]);
-      printf("%d %s\n", i + 1, line);
-      free(line);
+      printf("%d ", i + 1);
+      for (int k = 0; history->previous_commands[i][k] != NULL; k++) {
+        printf("%s ", history->previous_commands[i][k]);
+      }
+      printf("\n");
+      // char *line = tokens_to_string(history->previous_commands[i]);
+      // printf("%d %s\n", i + 1, line);
+      // free(line);
     }
   }
 }
