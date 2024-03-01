@@ -13,7 +13,8 @@ Tokens copy_tokens(Tokens tokens) {
     return NULL;
   }
 
-  for (int i = 0; tokens[i] != NULL; i++) {
+  int i = 0;
+  for (; tokens[i] != NULL; i++) {
     if (i >= buffer) {
       buffer <<= 1;
       copy = (Tokens)realloc(copy, (buffer * sizeof(char *)) + 1);
@@ -32,6 +33,7 @@ Tokens copy_tokens(Tokens tokens) {
     // }
     // strcpy(copy[i], tokens[i]);
   }
+  copy[i] = NULL;
   return copy;
 }
 

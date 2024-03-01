@@ -50,9 +50,11 @@ int main(int argc, char *argv[]) {
       continue;
     }
 
+    int add_to_history = 0;
+
     // history commands
     if (command[0][0] == '!') {
-      printf("History command invoked\n");
+      add_to_history = 1;
       if (strlen(command[0]) > 1) {
         if (command[0][1] == '-') {
           printf("User entered !-?\n");
@@ -61,11 +63,27 @@ int main(int argc, char *argv[]) {
           printf("User entered !!\n");
           // user entered !!
         }
-        // Tokens command = get_history(command[0][1]);
+        if (command[0][2] != 0) {
+          char a[2];
+          char b[2];
+          sprintf(a, "%d", command[0][1] - 48);
+          sprintf(b, "%d", command[0][2] - 48);
+          strcat(a, b);
+          int both_int = atoi(a);
+          command = get_history(history, both_int);
+        } else {
+          command = get_history(
+              history,
+              command[0][1] -
+                  48); // for some reason the number is being added with 48
+                       // here, so removing the 48 solves the issue
+        }
       }
     }
 
-    add_history(history, command);
+    if (add_to_history != 1) {
+      add_history(history, command);
+    }
 
     // built in commands
     if (strcmp(command[0], "exit") == 0) {
