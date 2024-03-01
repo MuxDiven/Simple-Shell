@@ -61,7 +61,7 @@ int main(int argc, char *argv[]) {
           printf("User entered !!\n");
           // user entered !!
         }
-        // Tokens command = get_history(command[0][1]);
+        Tokens command = get_history(history, command[0][1]);
       }
     }
 

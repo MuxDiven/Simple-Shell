@@ -29,7 +29,18 @@ void add_history(History history,
   }
 }
 
-Tokens get_history(History history, int index);
+Tokens get_history(History history, int index) {
+  if (history->previous_commands[history->index + 1] == NULL) {
+    return history->previous_commands[index - 1];
+    printf("Returning from %d the value -> %s and so on\n", index - 1,
+           history->previous_commands[index - 1][0]);
+  } else {
+    for (int i = 0; i < history->index; i++) {
+      return history->previous_commands[history->index];
+    }
+  }
+  return 0;
+}
 
 void show_history(History history) {
   int j = history->index;
