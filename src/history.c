@@ -48,7 +48,6 @@ Tokens get_history(History history, int index) {
 }
 
 void show_history(History history) {
-  printf("CAlled");
   int j = history->index;
   if (history->previous_commands[history->index + 1] != NULL) {
     for (int i = 0; i < 20; i++) {
@@ -57,9 +56,6 @@ void show_history(History history) {
         printf("%s", history->previous_commands[j][k]);
       }
       printf("\n");
-      // char *line = tokens_to_string(history->previous_commands[j]);
-      // printf("%d %s\n", i + 1, line);
-      // free(line);
       j++;
       if (j == 20) {
         j = 0;
@@ -72,9 +68,6 @@ void show_history(History history) {
         printf("%s ", history->previous_commands[i][k]);
       }
       printf("\n");
-      // char *line = tokens_to_string(history->previous_commands[i]);
-      // printf("%d %s\n", i + 1, line);
-      // free(line);
     }
   }
 }
@@ -99,7 +92,11 @@ int save_history(History h, char *filepath) {
 
   for (int i = h->index, j = 0; j < 20; i = (i + 1) % h->size, j++) {
     if (h->previous_commands[i] != NULL) {
-      fprintf(fptr, "%s\n", tokens_to_string(h->previous_commands[i]));
+
+      for (int k = 0; h->previous_commands[i][k] != NULL; k++) {
+        fprintf(fptr, "%s ", h->previous_commands[i][k]);
+      }
+      fprintf(fptr, "\n");
     }
   }
   fclose(fptr);
