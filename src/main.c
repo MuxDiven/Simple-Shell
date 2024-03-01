@@ -24,7 +24,7 @@ int main(int argc, char *argv[]) {
   char *history_filepath =
       malloc(strlen(getenv("HOME")) + strlen("/.hist_list") + 1);
   history_filepath = strcpy(history_filepath, getenv("HOME"));
-  history_filepath = strcat(history_filepath, "/hist_list");
+  history_filepath = strcat(history_filepath, "/.hist_list");
   History history = load_history(history_filepath);
 
   printf("shimple shell- inishialished\n");
@@ -99,9 +99,9 @@ int main(int argc, char *argv[]) {
     free_tokens(command);
   }
 
-  save_history(history, history_filepath);
-
   // save history
+  save_history(history, history_filepath);
+  free_history(&history);
   // save alias
   // restore original path
   // exit
