@@ -32,17 +32,23 @@ void add_history(History history,
 Tokens get_history(History history, int index) {
   if (history->previous_commands[history->index + 1] == NULL) {
     return history->previous_commands[index - 1];
-    printf("Returning from %d the value -> %s and so on\n", index - 1,
-           history->previous_commands[index - 1][0]);
   } else {
-    for (int i = 0; i < history->index; i++) {
-      return history->previous_commands[history->index];
+    printf("Taking in an index of -> %d", index);
+    fflush(stdout);
+    int j = history->index + index - 1;
+    for (int i = 0; i < 20; i++) {
+      j++;
+      if (j == 20) {
+        j = 0;
+      }
     }
+    return history->previous_commands[j];
   }
   return 0;
 }
 
 void show_history(History history) {
+  printf("CAlled");
   int j = history->index;
   if (history->previous_commands[history->index + 1] != NULL) {
     for (int i = 0; i < 20; i++) {
