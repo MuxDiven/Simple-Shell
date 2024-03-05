@@ -91,13 +91,12 @@ int main(int argc, char *argv[]) {
     }
 
     // aliases
-    if (strcmp(command[0], "alias") == 0) {
+    if (strcmp(command[0], "ali-a") == 0) {
       if (numtok == 1) {
         printf("Printing all aliases\n");
         show_aliases(aliases);
         continue;
       } else if (numtok >= 3) {
-
         char *key;
         key = strdup(command[1]);
 

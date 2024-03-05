@@ -156,7 +156,8 @@ int save_aliases(Aliases aliases, char *filename) {
 }
 
 int alias_transform(Aliases aliases, Tokens *tokens, int *num_tokens) {
-
+  // TODO: add null pointer to end of transform
+  // fix malloc for copying data - inner loop
   int j = 0;
   int original_num = *num_tokens;
 
@@ -181,13 +182,16 @@ int alias_transform(Aliases aliases, Tokens *tokens, int *num_tokens) {
 
       // then cpy in everything
       for (int k = 0; alias_command[k] != NULL; k++) {
-        (*tokens)[i + j + k] = (char *)malloc(sizeof(alias_command[k]));
-        strcpy((*tokens)[i + j + k], alias_command[k]);
+        // (*tokens)[i + j + k] = (char *)malloc(sizeof(alias_command[k]));
+        (*tokens)[i + j + k] = strdup(alias_command[k]);
+        // strcpy((*tokens)[i + j + k], alias_command[k]);
       }
 
       j += num_alias_tokens - 1;
     }
   }
+
+  (*tokens)[*num_tokens + 1] = NULL;
 
   return 0;
 }
