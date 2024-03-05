@@ -11,7 +11,7 @@ typedef struct alias **Aliases;
 Aliases allocate_aliases(); // init
 alias *new_alias(char *key, Tokens command);
 int add_alias(Aliases aliases, char *key, Tokens args);
-int save_aliases(Aliases aliases, char *key, char *filename);
+int save_aliases(Aliases aliases, char *filename);
 int is_alias(Aliases aliases, char *key);
 int load_alias();
 int is_alias(Aliases aliases, char *key);

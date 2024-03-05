@@ -134,7 +134,7 @@ Aliases read_aliases(char *filepath) {
   return a;
 }
 
-int save_aliases(Aliases aliases, char *key, char *filename) {
+int save_aliases(Aliases aliases, char *filename) {
   FILE *fptr = fopen(filename, "w");
   if (fptr == NULL)
     return 0;
@@ -193,19 +193,20 @@ int alias_transform(Aliases aliases, Tokens *tokens, int *num_tokens) {
 }
 
 void show_aliases(Aliases aliases) {
-	alias *head = *aliases;
+  alias *head = *aliases;
   for (head; head != NULL; head = head->next) {
-    printf("Name:%s   Command:%s\n", head->key, tokens_to_string(head->command));
+    printf("Name:%s   Command:%s\n", head->key,
+           tokens_to_string(head->command));
   }
 }
 
-int check_for_alias(Aliases aliases, Tokens tokens){
-	alias *head = *aliases;
-	for (head; head != NULL; head = head->next) {
-		if (head->key == tokens[1]){
-			printf("FOUND");
-			return 1;
-		}
-	}
-	return 0;
+int check_for_alias(Aliases aliases, Tokens tokens) {
+  alias *head = *aliases;
+  for (head; head != NULL; head = head->next) {
+    if (head->key == tokens[1]) {
+      printf("FOUND");
+      return 1;
+    }
+  }
+  return 0;
 }

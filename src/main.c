@@ -90,62 +90,65 @@ int main(int argc, char *argv[]) {
       add_history(history, command);
     }
 
-
     // aliases
-		if (strcmp(command[0], "alias") == 0){
-			if (numtok == 1){
-				printf("Printing all aliases\n");
-				show_aliases(aliases);
-				continue;
-			}
-			else if (numtok == 3){
-				if (check_for_alias(aliases, command) == 0){
-					printf("Adding new alias\n");
-					add_alias(aliases, command[1], command);
-				}
-				else {
-					printf("Alias over ridden");
-					rem_at(aliases, command[2]);
-					add_alias(aliases, command[1], command);
-				}
-				continue;
-			}
-		}
-		else if (strcmp(command[0], "unalias") == 0){
-			if (numtok == 4){
-				int failure = rem_at(aliases, command[2]);
-				if (failure == 1){
-					printf("Alias removed\n");
-				}
-				else {
-					printf("Alias not found\n");
-				}
-				continue;
-			}
-		}
+    if (strcmp(command[0], "alias") == 0) {
+      if (numtok == 1) {
+        printf("Printing all aliases\n");
+        show_aliases(aliases);
+        continue;
+      } else if (numtok >= 3) {
 
+        char *key;
+        key = strdup(command[1]);
+
+        memmove(command[0], command[2], (numtok - 1) * sizeof(char *));
+        command[numtok - 2] = NULL;
+
+        if (check_for_alias(aliases, command) == 0) {
+          printf("Adding new alias\n");
+          add_alias(aliases, key, command);
+        } else {
+          printf("Alias over ridden");
+          rem_at(aliases, command[2]);
+          add_alias(aliases, key, command);
+        }
+
+        free(key);
+        continue;
+      }
+    } else if (strcmp(command[0], "unalias") == 0) {
+      if (numtok == 4) {
+        int failure = rem_at(aliases, command[2]);
+        if (failure == 1) {
+          printf("Alias removed\n");
+        } else {
+          printf("Alias not found\n");
+        }
+        continue;
+      }
+    }
 
     // built in commands
     if (strcmp(command[0], "exit") == 0) {
       break;
     } else if (strcmp(command[0], "cd") == 0) {
-				if (cd(command, numtok) == 1){
-					printf("FAILED\n");
-				}
-				continue;
+      if (cd(command, numtok) == 1) {
+        printf("FAILED\n");
+      }
+      continue;
     } else if (strcmp(command[0], "getpath") == 0) {
-				if (getpath(command) == 1){
-					printf("FAILED\n");
-				}
-				continue;
+      if (getpath(command) == 1) {
+        printf("FAILED\n");
+      }
+      continue;
     } else if (strcmp(command[0], "setpath") == 0) {
-				if (setpath(command, numtok) == 1){
-					printf("FAILED\n");
-				}
-				continue;
+      if (setpath(command, numtok) == 1) {
+        printf("FAILED\n");
+      }
+      continue;
     } else if (strcmp(command[0], "history") == 0) {
-				show_history(history);
-				continue;
+      show_history(history);
+      continue;
     }
 
     pid_t pid = fork();
