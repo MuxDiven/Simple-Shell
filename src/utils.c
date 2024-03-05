@@ -6,35 +6,42 @@
 Tokens copy_tokens(Tokens tokens) {
 
   int buffer = 4;
-  Tokens copy = (Tokens)malloc(buffer * sizeof(char *));
+  Tokens copy = (Tokens)malloc((buffer * sizeof(char *)) + 1);
 
   if (!copy) {
     printf("memory allocation failed\n");
     return NULL;
   }
 
-  for (int i = 0; tokens[i] != NULL; i++) {
+  int i = 0;
+  for (; tokens[i] != NULL; i++) {
     if (i >= buffer) {
       buffer <<= 1;
-      copy = realloc(copy, buffer * sizeof(char *));
+      copy = (Tokens)realloc(copy, (buffer * sizeof(char *)) + 1);
       if (!copy) {
         free(copy);
         printf("memory allocation failed\n");
         return NULL;
       }
     }
-    copy[i] = malloc(sizeof(tokens[i]));
-    if (!copy[i]) {
-      free(copy);
-      printf("memory allocation failed\n");
-      return NULL;
-    }
-    strcpy(copy[i], tokens[i]);
+    copy[i] = strdup(tokens[i]);
+    // copy[i] = (char *)malloc((strlen(tokens[i]) + 1) * sizeof(char));
+    // if (!copy[i]) {
+    //   free(copy);
+    //   printf("memory allocation failed\n");
+    //   return NULL;
+    // }
+    // strcpy(copy[i], tokens[i]);
   }
+  copy[i] = NULL;
   return copy;
 }
 
 void free_tokens(Tokens tokens) {
+  for (int i = 0; tokens[i] != NULL; i++) {
+    free(tokens[i]);
+    tokens[i] = NULL;
+  }
   free(tokens);
   tokens = NULL;
 }
@@ -64,8 +71,9 @@ Tokens input_tok(char *input, int *num_tok) {
         return NULL;
       }
     }
-    tokens[*num_tok] = token;
-    (*num_tok)++;
+    tokens[(*num_tok)++] = strdup(token);
+    // tokens[*num_tok] = token;
+    // (*num_tok)++;
     token = strtok(NULL, delim);
   }
   return tokens;
@@ -73,7 +81,6 @@ Tokens input_tok(char *input, int *num_tok) {
 
 char *tokens_to_string(Tokens tokens) {
   char *line = (char *)malloc(512 * sizeof(char));
-
   for (int i = 0; tokens[i] != NULL; i++) {
     strcat(i == 0 ? line : strcat(line, " "), tokens[i]);
   }
