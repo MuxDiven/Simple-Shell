@@ -6,18 +6,20 @@ struct h {
   Tokens *previous_commands;
   int index;
   int size;
+  int count;
 };
 
 typedef struct h *History;
 
 History allocate_history();
 
-void add_history(History history, Tokens tokens, int num_tok);
+void add_history(History history, Tokens tokens);
 
 Tokens get_history(History history, int index);
 
 void show_history(History history);
+void free_history(History *history);
 
-void save_history(History history);
+int save_history(History history, char *filepath);
 
-History load_history(History history);
+History load_history(char *filepath);
