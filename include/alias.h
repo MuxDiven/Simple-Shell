@@ -19,7 +19,7 @@ Tokens get_alias_command(Aliases aliases, char *key);
 alias *rem_alias(Aliases aliases, char *key);
 int rem_at(Aliases aliases, char *key);
 void del_alias(alias *tail);
+void show_aliases(Aliases aliases);
 Aliases read_aliases(char *filepath);
-
 int check_for_alias(Aliases aliases, Tokens tokens);
 int alias_transform(Aliases, Tokens *tokens, int *num_tokens);
