@@ -1,4 +1,5 @@
 #include "../include/main.h"
+#include "../include/alias.h"
 #include "../include/built-ins.h"
 #include "../include/history.h"
 #include "../include/utils.h"
@@ -21,6 +22,8 @@ int main(int argc, char *argv[]) {
 
   char line[LINE_SIZE];
 
+  History history = allocate_history();
+  Aliases aliases = allocate_aliases();
   char *history_filepath =
       malloc(strlen(getenv("HOME")) + strlen("/.hist_list") + 1);
   history_filepath = strcpy(history_filepath, getenv("HOME"));
@@ -45,6 +48,9 @@ int main(int argc, char *argv[]) {
     }
     int numtok = 0;
     Tokens command = input_tok(line, &numtok);
+    // TODO: MAKE SURE THIS IS IN THE RIGHT PLACE
+    // IT ALSO NEEDS TO BE RECURSIVE
+    alias_transform(aliases, &command, &numtok);
 
     if (numtok == 0) {
       continue;
@@ -84,6 +90,8 @@ int main(int argc, char *argv[]) {
     if (add_to_history != 1) {
       add_history(history, command);
     }
+
+    // aliases
 
     // built in commands
     if (strcmp(command[0], "exit") == 0) {
