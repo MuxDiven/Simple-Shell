@@ -93,6 +93,68 @@ int rem_at(Aliases aliases, char *key) {
   return 0;
 }
 
+Aliases read_aliases(char *filepath) {
+  FILE *fptr = fopen(filepath, "r");
+  if (!fptr)
+    return NULL;
+
+  Aliases a = allocate_aliases();
+  int c = 1;
+  int buffer = 16;
+
+  while (c > 0) {
+    char *push = malloc(buffer * sizeof(char));
+    int i = 0;
+
+    while ((c = fgetc(fptr)) != '\n' && c > 0) {
+      if (i == buffer) {
+        buffer <<= 1;
+        push = realloc(push, buffer);
+      }
+      push[i++] = c;
+    }
+
+    // tokenise
+
+    if (c > 0) {
+      push[i++] = '\0';
+      int len = 0;
+      Tokens push_tok = input_tok(push, &len);
+      // get first key
+      char *key = malloc(sizeof(char *) * (strlen(push_tok[0]) + 1));
+      strcpy(key, push_tok[0]);
+      // memmove down
+      // double check truncating
+      memmove(push_tok[0], push_tok[1], (sizeof(char *) * (len - 1)));
+      add_alias(a, key, push_tok);
+    }
+  }
+
+  fclose(fptr);
+  return a;
+}
+
+int save_aliases(Aliases aliases, char *key, char *filename) {
+  FILE *fptr = fopen(filename, "w");
+  if (fptr == NULL)
+    return 0;
+
+  alias *head = *aliases;
+
+  while (head) {
+    fprintf(fptr, "%s", head->key);
+
+    int j = 0;
+    while (head->command[j] != NULL) {
+      fprintf(fptr, " %s", head->command[j]);
+    }
+    fprintf(fptr, "\n");
+    head = head->next;
+  }
+  fclose(fptr);
+  return 1;
+}
+
 int alias_transform(Aliases aliases, Tokens *tokens, int *num_tokens) {
 
   int j = 0;
