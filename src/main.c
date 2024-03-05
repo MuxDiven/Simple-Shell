@@ -22,7 +22,6 @@ int main(int argc, char *argv[]) {
 
   char line[LINE_SIZE];
 
-  History history = allocate_history();
   Aliases aliases = allocate_aliases();
   char *history_filepath =
       malloc(strlen(getenv("HOME")) + strlen("/.hist_list") + 1);
