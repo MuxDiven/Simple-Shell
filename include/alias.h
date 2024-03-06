@@ -23,3 +23,16 @@ void show_aliases(Aliases aliases);
 Aliases read_aliases(char *filepath);
 int check_for_alias(Aliases aliases, Tokens tokens);
 int alias_transform(Aliases, Tokens *tokens, int *num_tokens);
+
+typedef struct at_node {
+  char *key;
+  struct at_node *next;
+} at_node;
+
+typedef struct at_node **AT_List;
+AT_List allocate_at_list();
+at_node *new_at_node(char *key);
+int add_at_node(AT_List at_list, char *key);
+int contains_at_node(AT_List at_list, char *key);
+void free_at_node(at_node *node);
+void clear_at_list(AT_List at_list);
