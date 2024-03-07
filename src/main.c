@@ -14,8 +14,10 @@
 
 int main(int argc, char *argv[]) {
 
-  char *originalPATH = getenv("PATH"); // save the current path
-  chdir(getenv("HOME"));               // set home directory
+  char *originalPATH = (char *)malloc((strlen(getenv("HOME")) + 1) *
+                                      sizeof(char)); // save the current path
+  originalPATH = getenv("PATH");                     // save the current path
+  chdir(getenv("HOME"));                             // set home directory
 
   // // load history
   // // load alias
@@ -137,7 +139,7 @@ int main(int argc, char *argv[]) {
       }
       continue;
     } else if (strcmp(command[0], "getpath") == 0) {
-      if (getpath(command) == 1) {
+      if (getpath(command, numtok) == 1) {
         printf("FAILED\n");
       }
       continue;
@@ -166,6 +168,8 @@ int main(int argc, char *argv[]) {
     free_tokens(command);
   }
 
+  printf("%s\n", originalPATH);
+  free(originalPATH);
   // save history
   save_history(history, history_filepath);
   free_history(&history);
