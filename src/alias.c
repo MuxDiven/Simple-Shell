@@ -38,6 +38,7 @@ int add_alias(Aliases aliases, char *key, Tokens args) {
     head = *aliases;
     while (head->next) {
       if (strcmp(head->key, key) == 0) {
+        free_tokens(head->command);
         head->command = copy_tokens(args);
         return 0;
       }
@@ -156,8 +157,13 @@ int save_aliases(Aliases aliases, char *filename) {
 }
 
 void show_aliases(Aliases aliases) {
-  alias *head = *aliases;
-  for (; head != NULL; head = head->next) {
+
+  if (*aliases == NULL) {
+    printf("No aliases set yet\n");
+    return;
+  }
+
+  for (alias *head = *aliases; head != NULL; head = head->next) {
     printf("Name:%s   Command:", head->key);
     for (int i = 0; head->command[i] != NULL; i++) {
       printf(" %s", head->command[i]);
@@ -179,22 +185,27 @@ int check_for_alias(Aliases aliases, Tokens tokens) {
 
 int alias_transform(Aliases aliases, Tokens *tokens, int *num_tokens) {
 
-  int j = 0;
+  int expansion_scalar =
+      0; // this is the updated after a token transformation has been done
   AT_List at_list = allocate_at_list();
 
   for (int i = 0; i < (*num_tokens);) {
-    Tokens alias_command = get_alias_command(aliases, (*tokens)[i + j]);
+    int j = 0;
+    Tokens alias_command =
+        get_alias_command(aliases, (*tokens)[i + expansion_scalar]);
 
     if (alias_command) {
       int num_alias_tokens = 0;
       while (alias_command[num_alias_tokens] != NULL) {
         if (strcmp(alias_command[num_alias_tokens], (*tokens)[i + j]) == 0) {
+          free_at_list(at_list);
           return 1;
         }
         num_alias_tokens++;
       }
 
       if (contains_at_node(at_list, (*tokens)[i + j]) == 1) {
+        free_at_list(at_list);
         return 1;
       }
       add_at_node(at_list, (*tokens)[i + j]);
@@ -206,23 +217,27 @@ int alias_transform(Aliases aliases, Tokens *tokens, int *num_tokens) {
           (Tokens)realloc((*tokens), ((*num_tokens) * sizeof(char *)) + 1);
 
       // then memmve it allong num_alias_tokens
-      memmove(*tokens + (i + j) + (num_alias_tokens - 1), *tokens + (i + j),
-              (*num_tokens - (num_alias_tokens - 1) - (i + j)) *
-                  sizeof(char *));
+      memmove(
+          *tokens + (i + j + expansion_scalar) + (num_alias_tokens - 1),
+          *tokens + (i + j + expansion_scalar),
+          (*num_tokens - (num_alias_tokens - 1) - (i + j + expansion_scalar)) *
+              sizeof(char *));
 
       // then cpy in everything
       for (int k = 0; alias_command[k] != NULL; k++) {
-        (*tokens)[i + j + k] = strdup(alias_command[k]);
+        (*tokens)[i + j + k + expansion_scalar] = strdup(alias_command[k]);
       }
 
       j += num_alias_tokens - 1;
     } else {
       i++;
+      expansion_scalar += j;
       clear_at_list(at_list);
     }
   }
 
-  (*tokens)[*num_tokens + 1] = NULL;
+  (*tokens)[(*num_tokens)] = NULL;
+  free_at_list(at_list);
 
   return 0;
 }
@@ -260,8 +275,7 @@ int add_at_node(AT_List at_list, char *key) {
 
 // returns 1 if it does contain it
 int contains_at_node(AT_List at_list, char *key) {
-  at_node *head = *at_list;
-  for (; head != NULL; head = head->next) {
+  for (at_node *head = *at_list; head != NULL; head = head->next) {
     if (strcmp(head->key, key) == 0) {
       return 1;
     }
@@ -276,9 +290,17 @@ void free_at_node(at_node *node) {
 }
 
 void clear_at_list(AT_List at_list) {
-  for (at_node *head = *at_list; head != NULL; head = head->next) {
+  at_node *temp;
+  at_node *head = *at_list;
+  while (head != NULL) {
+    temp = head->next;
     free_at_node(head);
+    head = temp;
   }
-  // free(at_list);
-  // *at_list = NULL;
+  *at_list = NULL;
+}
+
+void free_at_list(AT_List at_list) {
+  clear_at_list(at_list);
+  free(*at_list);
 }

@@ -17,8 +17,8 @@ int main(int argc, char *argv[]) {
   char *originalPATH = getenv("PATH"); // save the current path
   chdir(getenv("HOME"));               // set home directory
 
-  // load history
-  // load alias
+  // // load history
+  // // load alias
 
   char line[LINE_SIZE];
 
@@ -47,50 +47,6 @@ int main(int argc, char *argv[]) {
     }
     int numtok = 0;
     Tokens command = input_tok(line, &numtok);
-    // TODO: MAKE SURE THIS IS IN THE RIGHT PLACE
-    // IT ALSO NEEDS TO BE RECURSIVE
-
-    // aliases
-    if (strcmp(command[0], "ali-a") == 0) {
-      if (numtok == 1) {
-        printf("Printing all aliases\n");
-        show_aliases(aliases);
-        continue;
-      } else if (numtok >= 3) {
-        char *key;
-        key = strdup(command[1]);
-
-        memmove(command, command + 2, (numtok - 2) * sizeof(char *));
-        command[numtok - 2] = NULL;
-
-        if (check_for_alias(aliases, command) == 0) {
-          printf("Adding new alias\n");
-          add_alias(aliases, key, command);
-        } else {
-          printf("Alias over ridden");
-          rem_at(aliases, command[2]);
-          add_alias(aliases, key, command);
-        }
-
-        free(key);
-        continue;
-      }
-    } else if (strcmp(command[0], "unalias") == 0) {
-      if (numtok == 4) {
-        int failure = rem_at(aliases, command[2]);
-        if (failure == 1) {
-          printf("Alias removed\n");
-        } else {
-          printf("Alias not found\n");
-        }
-        continue;
-      }
-    }
-
-    if (alias_transform(aliases, &command, &numtok) == 1) {
-      printf("Cyclic alias deteced: aborting\n");
-      continue;
-    }
 
     if (numtok == 0) {
       continue;
@@ -129,6 +85,47 @@ int main(int argc, char *argv[]) {
 
     if (add_to_history != 1) {
       add_history(history, command);
+    }
+
+    // aliases
+    if (strcmp(command[0], "ali-a") == 0) {
+      if (numtok == 1) {
+        show_aliases(aliases);
+        continue;
+      } else if (numtok == 2) {
+        printf("Error parsing alias command\n");
+        continue;
+      } else {
+        char *key;
+        key = strdup(command[1]);
+
+        memmove(command, command + 2, (numtok - 2) * sizeof(char *));
+        command[numtok - 2] = NULL;
+
+        if (check_for_alias(aliases, command) == 0) {
+          printf("Adding new alias\n");
+          add_alias(aliases, key, command);
+        } else {
+          printf("Overriding alias");
+          add_alias(aliases, key, command);
+        }
+
+        free(key);
+        continue;
+      }
+    } else if (strcmp(command[0], "unalias") == 0) {
+      int failure = rem_at(aliases, command[2]);
+      if (failure == 1) {
+        printf("Alias removed\n");
+      } else {
+        printf("Alias not found\n");
+      }
+      continue;
+    }
+
+    if (alias_transform(aliases, &command, &numtok) == 1) {
+      printf("Cyclic alias detected: aborting\n");
+      continue;
     }
 
     // built in commands
@@ -179,7 +176,8 @@ int main(int argc, char *argv[]) {
   return 0;
 }
 
-// should probably abstract this to a different file with the tokenizer function
+// should probably abstract this to a different file with the tokenizer
+// function
 int get_line(char *line) {
   if (fgets(line, LINE_SIZE, stdin) == NULL)
     return EOF;

@@ -36,3 +36,4 @@ int add_at_node(AT_List at_list, char *key);
 int contains_at_node(AT_List at_list, char *key);
 void free_at_node(at_node *node);
 void clear_at_list(AT_List at_list);
+void free_at_list(AT_List at_list);
