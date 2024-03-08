@@ -23,3 +23,6 @@ void show_aliases(Aliases aliases);
 Aliases read_aliases(char *filepath);
 int check_for_alias(Aliases aliases, Tokens tokens);
 int alias_transform(Aliases, Tokens *tokens, int *num_tokens);
+void free_alias_node(alias *node);
+void clear_aliases(Aliases aliases);
+void free_aliases(Aliases aliases);

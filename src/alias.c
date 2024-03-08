@@ -95,10 +95,18 @@ int rem_at(Aliases aliases, char *key) {
 
 Aliases read_aliases(char *filepath) {
   FILE *fptr = fopen(filepath, "r");
-  if (!fptr)
-    return NULL;
-
   Aliases a = allocate_aliases();
+  if (!fptr)
+    return a;
+
+  // FILE *fptr_check = fptr;
+  // fseek(fptr_check, 0, SEEK_END);
+  // int size = ftell(fptr_check);
+  // fclose(fptr_check);
+  //
+  // if (size == 0)
+  //   return a;
+
   int c = 1;
   int buffer = 16;
 
@@ -203,10 +211,32 @@ void show_aliases(Aliases aliases) {
 int check_for_alias(Aliases aliases, Tokens tokens) {
   alias *head = *aliases;
   for (head; head != NULL; head = head->next) {
-    if (head->key == tokens[1]) {
+    if (head->key == tokens[0]) {
       printf("FOUND");
       return 1;
     }
   }
   return 0;
+}
+void free_alias_node(alias *node) {
+  free(node->key);
+  free_tokens(node->command);
+  free(node);
+  node = NULL;
+}
+
+void clear_aliases(Aliases aliases) {
+  alias *temp;
+  alias *head = *aliases;
+  while (head != NULL) {
+    temp = head->next;
+    free_alias_node(head);
+    head = temp;
+  }
+  *aliases = NULL;
+}
+
+void free_aliases(Aliases aliases) {
+  clear_aliases(aliases);
+  free(*aliases);
 }
