@@ -133,7 +133,7 @@ Aliases read_aliases(char *filepath) {
       strcpy(key, push_tok[0]);
       // memmove down
       // double check truncating
-      memmove(push_tok[0], push_tok[1], (sizeof(char *) * (len - 1)));
+      memmove(push_tok, &push_tok[1], (sizeof(char *) * (len - 1)));
       push_tok[len - 1] = NULL;
       add_alias(a, key, push_tok);
     }
