@@ -33,10 +33,10 @@ Tokens get_history(History history, int index) {
   if (history->previous_commands[history->index + 1] == NULL) {
     return history->previous_commands[index - 1];
   } else {
-    printf("Taking in an index of -> %d", index);
-    fflush(stdout);
-    int j = history->index + index - 1;
-    for (int i = 0; i < 20; i++) {
+    int j = history->index + index -
+            1; // there is an error when this is over 20 but it
+    for (int i = 0; i < 20;
+         i++) { // messes up the rest of this code so ill do it later
       j++;
       if (j == 20) {
         j = 0;
@@ -47,13 +47,49 @@ Tokens get_history(History history, int index) {
   return 0;
 }
 
+Tokens get_previous_history(History history) {
+  return history->previous_commands[history->index - 1];
+}
+
+Tokens get_minus_history(History history,
+                         int index) { // need to make it work past 20 hist_index
+  if (history->previous_commands[history->index + 1] == NULL) {
+    int new_index = history->index - index;
+    return get_history(history, new_index);
+  } else {
+    printf("Are we getting here");
+    fflush(stdout);
+    int j = 0;
+    if (history->index + index - 1 > 20) {
+      // something but we are fucked here
+      // error is when history index + index > 20 after the first 20 are
+      // completed
+    } else {
+      int j = history->index + index - 1;
+    }
+    for (int i = 0; i < 20; i++) {
+      j++;
+      if (j == 20) {
+        j = 0;
+      }
+    }
+    int new_index = j - index;
+    printf("This is the new index -> %d\n This is the j -> %d\n This is the "
+           "index -> %d\n This is the history->index -> %d",
+           new_index, j, index, history->index);
+    fflush(stdout);
+    return get_history(history, new_index);
+  }
+  return 0;
+}
+
 void show_history(History history) {
   int j = history->index;
   if (history->previous_commands[history->index + 1] != NULL) {
     for (int i = 0; i < 20; i++) {
       printf("%d ", i + 1);
       for (int k = 0; history->previous_commands[j][k] != NULL; k++) {
-        printf("%s", history->previous_commands[j][k]);
+        printf("%s ", history->previous_commands[j][k]);
       }
       printf("\n");
       j++;

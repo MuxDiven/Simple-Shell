@@ -27,6 +27,8 @@ int main(int argc, char *argv[]) {
   history_filepath = strcat(history_filepath, "/.hist_list");
   History history = load_history(history_filepath);
 
+  // History history = allocate_history();
+
   printf("shimple shell- inishialished\n");
   for (;;) {
 
@@ -54,29 +56,36 @@ int main(int argc, char *argv[]) {
 
     // history commands
     if (command[0][0] == '!') {
+
       add_to_history = 1;
       if (strlen(command[0]) > 1) {
-        if (command[0][1] == '-') {
-          printf("User entered !-?\n");
-          // user entered !-
-        } else if (command[0][1] == '!') {
-          printf("User entered !!\n");
-          // user entered !!
-        }
-        if (command[0][2] != 0) {
-          char a[2];
-          char b[2];
+
+        if (command[0][1] == '!') { // user entered '!!'
+          command = get_previous_history(history);
+        } else if (command[0][1] == '-') { // user entered '!-x'
+          if (command[0][3] != 0) {        // user entered '!-xx'
+            char a[2], b[2];
+            sprintf(a, "%d", command[0][2] - 48);
+            sprintf(b, "%d", command[0][3] - 48);
+            strcat(a, b);
+            int index = atoi(a);
+            printf("Do we get here right");
+            fflush(stdout);
+            command = get_minus_history(history, index);
+          } else {
+            printf("Or do we get here right");
+            fflush(stdout);
+            command = get_minus_history(history, command[0][2] - 48);
+          }
+        } else if (command[0][2] != 0) { // user entered '!xx'
+          char a[2], b[2];
           sprintf(a, "%d", command[0][1] - 48);
           sprintf(b, "%d", command[0][2] - 48);
           strcat(a, b);
-          int both_int = atoi(a);
-          command = get_history(history, both_int);
+          int index = atoi(a);
+          command = get_history(history, index);
         } else {
-          command = get_history(
-              history,
-              command[0][1] -
-                  48); // for some reason the number is being added with 48
-                       // here, so removing the 48 solves the issue
+          command = get_history(history, command[0][1] - 48);
         }
       }
     }
