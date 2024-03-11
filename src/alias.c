@@ -134,6 +134,7 @@ Aliases read_aliases(char *filepath) {
       // memmove down
       // double check truncating
       memmove(push_tok[0], push_tok[1], (sizeof(char *) * (len - 1)));
+      push_tok[len - 1] = NULL;
       add_alias(a, key, push_tok);
     }
   }
@@ -154,7 +155,8 @@ int save_aliases(Aliases aliases, char *filename) {
 
     int j = 0;
     while (head->command[j] != NULL) {
-      fprintf(fptr, " %s", head->command[j]);
+      fprintf(fptr, " %s", strdup(head->command[j]));
+      j++;
     }
     fprintf(fptr, "\n");
     head = head->next;

@@ -176,7 +176,7 @@ int main(int argc, char *argv[]) {
   save_history(history, history_filepath);
   free_history(&history);
   // save alias
-  // save_aliases(aliases, alias_filepath);
+  save_aliases(aliases, alias_filepath);
   free_aliases(aliases);
   // restore original path
   // exit
