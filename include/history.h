@@ -7,6 +7,7 @@ struct h {
   int index;
   int size;
   int count;
+  int first;
 };
 
 typedef struct h *History;

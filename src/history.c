@@ -10,12 +10,12 @@ History allocate_history() {
   h->index = 0;
   h->size = HISTORY_SIZE;
   h->count = 0;
+  h->first = 0;
 
   return h;
 }
 
-void add_history(History history,
-                 Tokens tokens) { // adds function used to history struct
+void add_history(History history, Tokens tokens) {
   if (history->previous_commands[history->index] == NULL) {
     history->previous_commands[history->index] = copy_tokens(tokens);
   } else {
@@ -23,83 +23,51 @@ void add_history(History history,
     history->previous_commands[history->index] = copy_tokens(tokens);
   }
   history->index++;
-  history->count++;
+  history->count++; // gave history count a use :)
+  if (history->count == 21) {
+    history->count = 20;
+    history->first++;
+    if (history->first == 20) {
+      history->first = 0;
+    }
+  }
   if (history->index == history->size) {
     history->index = 0;
   }
 }
 
-Tokens
-get_history(History history,
-            int index) { // if this is called on the most recent command that
-                         // command is removed from previous_commands somehow
+Tokens get_history(History history, int index) {
   if (history->previous_commands[history->index + 1] == NULL) {
-    printf("get_history -> first if\n");
-    return history->previous_commands[index - 1];
+    return copy_tokens(history->previous_commands[index - 1]);
   } else {
-    printf("get_history -> second if\n");
-    int j = history->index + index -
-            1; // there is an error when this is over 20 but it
-    for (int i = 0; i < 20;
-         i++) { // messes up the rest of this code so ill do it later
-      j++;
-      if (j == 20) {
-        j = 0;
-      }
+    int j = 0;
+    j = history->first + index - 1;
+    if (j > 19) {
+      j -= 20;
     }
-    return history->previous_commands[j];
+    if (history->previous_commands[j] != 0) {
+      return copy_tokens(history->previous_commands[j]);
+    }
   }
   return 0;
 }
 
-Tokens get_previous_history(
-    History history) { // somehow when this is called it removes the command
-                       // that is called from previous_commadns
+Tokens get_previous_history(History history) {
   if (history->index == 0) {
-    printf("HOO");
-    fflush(stdout);
-    return history->previous_commands[20];
+    return copy_tokens(history->previous_commands[20]);
   } else {
-    printf("Here\n");
-    printf("history->index -> %d\n", history->index);
-    printf("here is the command before this one -> %s\n",
-           history->previous_commands[history->index - 2][0]);
-    fflush(stdout);
-    printf("here is the previous command that will be called %s\n",
-           history->previous_commands[history->index - 1][0]);
-    fflush(stdout);
-    return history->previous_commands[history->index - 1];
+    return copy_tokens(history->previous_commands[history->index - 1]);
   }
 }
 
-Tokens get_minus_history(History history,
-                         int index) { // need to make it work past 20 hist_index
+Tokens get_minus_history(History history, int index) {
   if (history->previous_commands[history->index + 1] == NULL) {
     int new_index = history->index - index;
     return get_history(history, new_index);
   } else {
-    printf("Are we getting here");
-    fflush(stdout);
     int j = 0;
-    if (history->index + index - 1 > 20) {
-      // something but we are fucked here
-      // error is when history index + index > 20 after the first 20 are
-      // completed
-    } else {
-      int j = history->index + index - 1;
-    }
-    for (int i = 0; i < 20; i++) {
-      j++;
-      if (j == 20) {
-        j = 0;
-      }
-    }
-    int new_index = j - index;
-    printf("This is the new index -> %d\n This is the j -> %d\n This is the "
-           "index -> %d\n This is the history->index -> %d\n",
-           new_index, j, index, history->index);
-    fflush(stdout);
-    return get_history(history, new_index);
+    j = 20 - index;
+    return get_history(history, j);
   }
   return 0;
 }

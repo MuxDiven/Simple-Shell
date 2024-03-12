@@ -21,13 +21,11 @@ int main(int argc, char *argv[]) {
 
   char line[LINE_SIZE];
 
-  // char *history_filepath =
-  //     malloc(strlen(getenv("HOME")) + strlen("/.hist_list") + 1);
-  // history_filepath = strcpy(history_filepath, getenv("HOME"));
-  // history_filepath = strcat(history_filepath, "/.hist_list");
-  // History history = load_history(history_filepath);
-
-  History history = allocate_history();
+  char *history_filepath =
+      malloc(strlen(getenv("HOME")) + strlen("/.hist_list") + 1);
+  history_filepath = strcpy(history_filepath, getenv("HOME"));
+  history_filepath = strcat(history_filepath, "/.hist_list");
+  History history = load_history(history_filepath);
 
   printf("shimple shell- inishialished\n");
   for (;;) {
@@ -61,6 +59,10 @@ int main(int argc, char *argv[]) {
       if (strlen(command[0]) > 1) {
 
         if (command[0][1] == '!') { // user entered '!!'
+          // if (get_history(history, 1) == 0) {
+          //   printf("Invalid entry, there is no command to copy");
+          //   continue;
+          // }
           command = get_previous_history(history);
         } else if (command[0][1] == '-') { // user entered '!-x'
           if (command[0][3] != 0) {        // user entered '!-xx'
@@ -69,12 +71,19 @@ int main(int argc, char *argv[]) {
             sprintf(b, "%d", command[0][3] - 48);
             strcat(a, b);
             int index = atoi(a);
-            printf("Do we get here right");
-            fflush(stdout);
+            // if (history->first == 0) {
+            //   if (index < history->index + 1) {
+            //     printf("Invalid index, please enter a number between 1 and
+            //     %d",
+            //            history->index + 1);
+            //     continue;
+            //   }
+            // } else if (index > 20 || index < 1) {
+            //   printf("Invalid index, please enter a number between 1 and
+            //   20"); continue;
+            // }
             command = get_minus_history(history, index);
           } else {
-            printf("Or do we get here right");
-            fflush(stdout);
             command = get_minus_history(history, command[0][2] - 48);
           }
         } else if (command[0][2] != 0) { // user entered '!xx'
@@ -83,16 +92,37 @@ int main(int argc, char *argv[]) {
           sprintf(b, "%d", command[0][2] - 48);
           strcat(a, b);
           int index = atoi(a);
+          // if (history->first == 0) {
+          //   if (index < history->index + 1) {
+          //     printf("Invalid index, please enter a number between 1 and %d",
+          //            history->index + 1);
+          //     continue;
+          //   }
+          // } else if (index > 20 || index < 1) {
+          //   printf("Invalid index, please enter a number between 1 and 20");
+          //   continue;
+          // }
           command = get_history(history, index);
         } else {
-          command = get_history(history, command[0][1] - 48);
+          // if (history->first == 0) {
+          //   if (command[0][1] < history->index + 1) {
+          //     printf("Invalid index, please enter a number between 1 and %d",
+          //            history->index + 1);
+          //     fflush(stdout);
+          //     continue;
+          //   }
+          // } else if (command[0][1] > 20 || command[0][1] < 1) {
+          //   printf("Invalid index, please enter a number between 1 and 20");
+          //   fflush(stdout);
+          //   continue;
+          // }
+          command =
+              get_history(history, command[0][1] - 48); // user entered '!x'
         }
       }
     }
 
     if (add_to_history != 1) {
-      printf("Added to history\n");
-      fflush(stdout);
       add_history(history, command);
     }
 
@@ -129,8 +159,8 @@ int main(int argc, char *argv[]) {
   }
 
   // save history
-  // save_history(history, history_filepath);
-  // free_history(&history);
+  save_history(history, history_filepath);
+  free_history(&history);
   // save alias
   // restore original path
   // exit
