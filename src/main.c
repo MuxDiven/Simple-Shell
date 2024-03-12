@@ -14,9 +14,7 @@
 
 int main(int argc, char *argv[]) {
 
-  char *originalPATH = (char *)malloc((strlen(getenv("PATH")) + 1) *
-                                      sizeof(char)); // save the current path
-  originalPATH = getenv("PATH");                     // save the current path
+  char *originalPATH = getenv("PATH"); // save the current path
 
   chdir(getenv("HOME")); // set home directory
 
@@ -97,7 +95,7 @@ int main(int argc, char *argv[]) {
     }
 
     // aliases
-    if (strcmp(command[0], "ali-a") == 0) {
+    if (strcmp(command[0], "alias") == 0) {
       if (numtok == 1) {
         show_aliases(aliases);
         continue;
@@ -176,7 +174,6 @@ int main(int argc, char *argv[]) {
   }
 
   printf("%s\n", originalPATH);
-  // free(originalPATH);
   // save history
   save_history(history, history_filepath);
   free_history(&history);
