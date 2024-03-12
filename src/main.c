@@ -24,7 +24,13 @@ int main(int argc, char *argv[]) {
 
   char line[LINE_SIZE];
 
-  Aliases aliases = allocate_aliases();
+  // Aliases aliases = allocate_aliases();
+  char *alias_filepath =
+      malloc(strlen(getenv("HOME")) + strlen("/.aliases") + 1);
+  alias_filepath = strcpy(alias_filepath, getenv("HOME"));
+  alias_filepath = strcat(alias_filepath, "/.aliases");
+  Aliases aliases = read_aliases(alias_filepath);
+
   char *history_filepath =
       malloc(strlen(getenv("HOME")) + strlen("/.hist_list") + 1);
   history_filepath = strcpy(history_filepath, getenv("HOME"));
@@ -174,9 +180,12 @@ int main(int argc, char *argv[]) {
   save_history(history, history_filepath);
   free_history(&history);
   // save alias
+  save_aliases(aliases, alias_filepath);
+  free_aliases(aliases);
   // restore original path
   // exit
-
+  free(history_filepath);
+  free(alias_filepath);
   return 0;
 }
 

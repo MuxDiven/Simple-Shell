@@ -96,10 +96,18 @@ int rem_at(Aliases aliases, char *key) {
 
 Aliases read_aliases(char *filepath) {
   FILE *fptr = fopen(filepath, "r");
-  if (!fptr)
-    return NULL;
-
   Aliases a = allocate_aliases();
+  if (!fptr)
+    return a;
+
+  // FILE *fptr_check = fptr;
+  // fseek(fptr_check, 0, SEEK_END);
+  // int size = ftell(fptr_check);
+  // fclose(fptr_check);
+  //
+  // if (size == 0)
+  //   return a;
+
   int c = 1;
   int buffer = 16;
 
@@ -126,7 +134,8 @@ Aliases read_aliases(char *filepath) {
       strcpy(key, push_tok[0]);
       // memmove down
       // double check truncating
-      memmove(push_tok[0], push_tok[1], (sizeof(char *) * (len - 1)));
+      memmove(push_tok, &push_tok[1], (sizeof(char *) * (len - 1)));
+      push_tok[len - 1] = NULL;
       add_alias(a, key, push_tok);
     }
   }
@@ -147,7 +156,8 @@ int save_aliases(Aliases aliases, char *filename) {
 
     int j = 0;
     while (head->command[j] != NULL) {
-      fprintf(fptr, " %s", head->command[j]);
+      fprintf(fptr, " %s", strdup(head->command[j]));
+      j++;
     }
     fprintf(fptr, "\n");
     head = head->next;
@@ -273,7 +283,17 @@ int add_at_node(AT_List at_list, char *key) {
   return 0;
 }
 
-// returns 1 if it does contain it
+int check_for_alias(Aliases aliases, Tokens tokens) {
+  alias *head = *aliases;
+  for (head; head != NULL; head = head->next) {
+    if (strcmp(head->key, tokens[0]) == 0) {
+      printf("FOUND");
+      return 1;
+    }
+  }
+  return 0;
+}
+
 int contains_at_node(AT_List at_list, char *key) {
   for (at_node *head = *at_list; head != NULL; head = head->next) {
     if (strcmp(head->key, key) == 0) {
@@ -283,10 +303,32 @@ int contains_at_node(AT_List at_list, char *key) {
   return 0;
 }
 
+
+void free_alias_node(alias *node) {
+  free(node->key);
+  free_tokens(node->command);
+}
+
 void free_at_node(at_node *node) {
   free(node->key);
   free(node);
   node = NULL;
+}
+
+void clear_aliases(Aliases aliases) {
+  alias *temp;
+  alias *head = *aliases;
+  while (head != NULL) {
+    temp = head->next;
+    free_alias_node(head);
+    head = temp;
+  }
+  *aliases = NULL;
+}
+
+void free_aliases(Aliases aliases) {
+  clear_aliases(aliases);
+  free(*aliases);
 }
 
 void clear_at_list(AT_List at_list) {
