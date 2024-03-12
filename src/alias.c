@@ -38,6 +38,7 @@ int add_alias(Aliases aliases, char *key, Tokens args) {
     head = *aliases;
     while (head->next) {
       if (strcmp(head->key, key) == 0) {
+        free_tokens(head->command);
         head->command = copy_tokens(args);
         return 0;
       }
@@ -165,19 +166,60 @@ int save_aliases(Aliases aliases, char *filename) {
   return 1;
 }
 
+void show_aliases(Aliases aliases) {
+
+  if (*aliases == NULL) {
+    printf("No aliases set yet\n");
+    return;
+  }
+
+  for (alias *head = *aliases; head != NULL; head = head->next) {
+    printf("Name:%s   Command:", head->key);
+    for (int i = 0; head->command[i] != NULL; i++) {
+      printf(" %s", head->command[i]);
+    }
+    printf("\n");
+  }
+}
+
+int check_for_alias(Aliases aliases, Tokens tokens) {
+  alias *head = *aliases;
+  for (head; head != NULL; head = head->next) {
+    if (head->key == tokens[1]) {
+      printf("FOUND");
+      return 1;
+    }
+  }
+  return 0;
+}
+
 int alias_transform(Aliases aliases, Tokens *tokens, int *num_tokens) {
 
-  int j = 0;
-  int original_num = *num_tokens;
+  int expansion_scalar =
+      0; // this is the updated after a token transformation has been done
+  AT_List at_list = allocate_at_list();
 
-  for (int i = 0; i < original_num; i++) {
-    Tokens alias_command = get_alias_command(aliases, (*tokens)[i + j]);
+  for (int i = 0; i < (*num_tokens);) {
+    int j = 0;
+    Tokens alias_command =
+        get_alias_command(aliases, (*tokens)[i + expansion_scalar]);
 
     if (alias_command) {
       int num_alias_tokens = 0;
       while (alias_command[num_alias_tokens] != NULL) {
+        if (strcmp(alias_command[num_alias_tokens], (*tokens)[i + j]) == 0) {
+          free_at_list(at_list);
+          return 1;
+        }
         num_alias_tokens++;
       }
+
+      if (contains_at_node(at_list, (*tokens)[i + j]) == 1) {
+        free_at_list(at_list);
+        return 1;
+      }
+      add_at_node(at_list, (*tokens)[i + j]);
+
       *num_tokens += (num_alias_tokens - 1);
 
       // we need to resize the original to have engouh space
@@ -185,44 +227,90 @@ int alias_transform(Aliases aliases, Tokens *tokens, int *num_tokens) {
           (Tokens)realloc((*tokens), ((*num_tokens) * sizeof(char *)) + 1);
 
       // then memmve it allong num_alias_tokens
-      memmove(*tokens + (i + j) + (num_alias_tokens - 1), *tokens + (i + j),
-              (*num_tokens - (num_alias_tokens - 1) - (i + j)) *
-                  sizeof(char *));
+      memmove(
+          *tokens + (i + j + expansion_scalar) + (num_alias_tokens - 1),
+          *tokens + (i + j + expansion_scalar),
+          (*num_tokens - (num_alias_tokens - 1) - (i + j + expansion_scalar)) *
+              sizeof(char *));
 
       // then cpy in everything
       for (int k = 0; alias_command[k] != NULL; k++) {
-        (*tokens)[i + j + k] = (char *)malloc(sizeof(alias_command[k]));
-        strcpy((*tokens)[i + j + k], alias_command[k]);
+        (*tokens)[i + j + k + expansion_scalar] = strdup(alias_command[k]);
       }
 
       j += num_alias_tokens - 1;
+    } else {
+      i++;
+      expansion_scalar += j;
+      clear_at_list(at_list);
     }
   }
+
+  (*tokens)[(*num_tokens)] = NULL;
+  free_at_list(at_list);
 
   return 0;
 }
 
-void show_aliases(Aliases aliases) {
-  alias *head = *aliases;
-  for (head; head != NULL; head = head->next) {
-    printf("Name:%s   Command:%s\n", head->key,
-           tokens_to_string(head->command));
+AT_List allocate_at_list() {
+  AT_List list = malloc(sizeof(AT_List));
+  *list = NULL;
+  return list;
+}
+
+at_node *new_at_node(char *key) {
+  at_node *node = (at_node *)malloc(sizeof(at_node));
+  node->key = malloc(sizeof(char) * (strlen(key) + 1));
+  strcpy(node->key, key);
+  node->next = NULL;
+  return node;
+}
+
+int add_at_node(AT_List at_list, char *key) {
+  at_node *temp, *head;
+  temp = new_at_node(key);
+
+  if (!(*at_list)) {
+    *at_list = temp;
+    return 0;
   }
+
+  head = *at_list;
+  while (head->next) {
+    head = head->next;
+  }
+  head->next = temp;
+  return 0;
 }
 
 int check_for_alias(Aliases aliases, Tokens tokens) {
   alias *head = *aliases;
   for (head; head != NULL; head = head->next) {
-    if (head->key == tokens[0]) {
+    if (strcmp(head->key, tokens[0]) == 0) {
       printf("FOUND");
       return 1;
     }
   }
   return 0;
 }
+
+int contains_at_node(AT_List at_list, char *key) {
+  for (at_node *head = *at_list; head != NULL; head = head->next) {
+    if (strcmp(head->key, key) == 0) {
+      return 1;
+    }
+  }
+  return 0;
+}
+
+
 void free_alias_node(alias *node) {
   free(node->key);
   free_tokens(node->command);
+}
+
+void free_at_node(at_node *node) {
+  free(node->key);
   free(node);
   node = NULL;
 }
@@ -241,4 +329,20 @@ void clear_aliases(Aliases aliases) {
 void free_aliases(Aliases aliases) {
   clear_aliases(aliases);
   free(*aliases);
+}
+
+void clear_at_list(AT_List at_list) {
+  at_node *temp;
+  at_node *head = *at_list;
+  while (head != NULL) {
+    temp = head->next;
+    free_at_node(head);
+    head = temp;
+  }
+  *at_list = NULL;
+}
+
+void free_at_list(AT_List at_list) {
+  clear_at_list(at_list);
+  free(*at_list);
 }

@@ -26,3 +26,17 @@ int alias_transform(Aliases, Tokens *tokens, int *num_tokens);
 void free_alias_node(alias *node);
 void clear_aliases(Aliases aliases);
 void free_aliases(Aliases aliases);
+
+typedef struct at_node {
+  char *key;
+  struct at_node *next;
+} at_node;
+
+typedef struct at_node **AT_List;
+AT_List allocate_at_list();
+at_node *new_at_node(char *key);
+int add_at_node(AT_List at_list, char *key);
+int contains_at_node(AT_List at_list, char *key);
+void free_at_node(at_node *node);
+void clear_at_list(AT_List at_list);
+void free_at_list(AT_List at_list);
