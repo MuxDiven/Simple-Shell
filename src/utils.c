@@ -76,6 +76,7 @@ Tokens input_tok(char *input, int *num_tok) {
     // (*num_tok)++;
     token = strtok(NULL, delim);
   }
+  tokens[*num_tok] = NULL;
   return tokens;
 }
 

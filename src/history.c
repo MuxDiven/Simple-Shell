@@ -29,10 +29,15 @@ void add_history(History history,
   }
 }
 
-Tokens get_history(History history, int index) {
+Tokens
+get_history(History history,
+            int index) { // if this is called on the most recent command that
+                         // command is removed from previous_commands somehow
   if (history->previous_commands[history->index + 1] == NULL) {
+    printf("get_history -> first if\n");
     return history->previous_commands[index - 1];
   } else {
+    printf("get_history -> second if\n");
     int j = history->index + index -
             1; // there is an error when this is over 20 but it
     for (int i = 0; i < 20;
@@ -47,8 +52,24 @@ Tokens get_history(History history, int index) {
   return 0;
 }
 
-Tokens get_previous_history(History history) {
-  return history->previous_commands[history->index - 1];
+Tokens get_previous_history(
+    History history) { // somehow when this is called it removes the command
+                       // that is called from previous_commadns
+  if (history->index == 0) {
+    printf("HOO");
+    fflush(stdout);
+    return history->previous_commands[20];
+  } else {
+    printf("Here\n");
+    printf("history->index -> %d\n", history->index);
+    printf("here is the command before this one -> %s\n",
+           history->previous_commands[history->index - 2][0]);
+    fflush(stdout);
+    printf("here is the previous command that will be called %s\n",
+           history->previous_commands[history->index - 1][0]);
+    fflush(stdout);
+    return history->previous_commands[history->index - 1];
+  }
 }
 
 Tokens get_minus_history(History history,
@@ -75,7 +96,7 @@ Tokens get_minus_history(History history,
     }
     int new_index = j - index;
     printf("This is the new index -> %d\n This is the j -> %d\n This is the "
-           "index -> %d\n This is the history->index -> %d",
+           "index -> %d\n This is the history->index -> %d\n",
            new_index, j, index, history->index);
     fflush(stdout);
     return get_history(history, new_index);

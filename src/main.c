@@ -21,13 +21,13 @@ int main(int argc, char *argv[]) {
 
   char line[LINE_SIZE];
 
-  char *history_filepath =
-      malloc(strlen(getenv("HOME")) + strlen("/.hist_list") + 1);
-  history_filepath = strcpy(history_filepath, getenv("HOME"));
-  history_filepath = strcat(history_filepath, "/.hist_list");
-  History history = load_history(history_filepath);
+  // char *history_filepath =
+  //     malloc(strlen(getenv("HOME")) + strlen("/.hist_list") + 1);
+  // history_filepath = strcpy(history_filepath, getenv("HOME"));
+  // history_filepath = strcat(history_filepath, "/.hist_list");
+  // History history = load_history(history_filepath);
 
-  // History history = allocate_history();
+  History history = allocate_history();
 
   printf("shimple shell- inishialished\n");
   for (;;) {
@@ -91,6 +91,8 @@ int main(int argc, char *argv[]) {
     }
 
     if (add_to_history != 1) {
+      printf("Added to history\n");
+      fflush(stdout);
       add_history(history, command);
     }
 
@@ -127,8 +129,8 @@ int main(int argc, char *argv[]) {
   }
 
   // save history
-  save_history(history, history_filepath);
-  free_history(&history);
+  // save_history(history, history_filepath);
+  // free_history(&history);
   // save alias
   // restore original path
   // exit
