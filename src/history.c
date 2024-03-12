@@ -10,12 +10,12 @@ History allocate_history() {
   h->index = 0;
   h->size = HISTORY_SIZE;
   h->count = 0;
+  h->first = 0;
 
   return h;
 }
 
-void add_history(History history,
-                 Tokens tokens) { // adds function used to history struct
+void add_history(History history, Tokens tokens) {
   if (history->previous_commands[history->index] == NULL) {
     history->previous_commands[history->index] = copy_tokens(tokens);
   } else {
@@ -23,7 +23,14 @@ void add_history(History history,
     history->previous_commands[history->index] = copy_tokens(tokens);
   }
   history->index++;
-  history->count++;
+  history->count++; // gave history count a use :)
+  if (history->count == 21) {
+    history->count = 20;
+    history->first++;
+    if (history->first == 20) {
+      history->first = 0;
+    }
+  }
   if (history->index == history->size) {
     history->index = 0;
   }
@@ -31,18 +38,36 @@ void add_history(History history,
 
 Tokens get_history(History history, int index) {
   if (history->previous_commands[history->index + 1] == NULL) {
-    return history->previous_commands[index - 1];
+    return copy_tokens(history->previous_commands[index - 1]);
   } else {
-    printf("Taking in an index of -> %d", index);
-    fflush(stdout);
-    int j = history->index + index - 1;
-    for (int i = 0; i < 20; i++) {
-      j++;
-      if (j == 20) {
-        j = 0;
-      }
+    int j = 0;
+    j = history->first + index - 1;
+    if (j > 19) {
+      j -= 20;
     }
-    return history->previous_commands[j];
+    if (history->previous_commands[j] != 0) {
+      return copy_tokens(history->previous_commands[j]);
+    }
+  }
+  return 0;
+}
+
+Tokens get_previous_history(History history) {
+  if (history->index == 0) {
+    return copy_tokens(history->previous_commands[20]);
+  } else {
+    return copy_tokens(history->previous_commands[history->index - 1]);
+  }
+}
+
+Tokens get_minus_history(History history, int index) {
+  if (history->previous_commands[history->index + 1] == NULL) {
+    int new_index = history->index - index;
+    return get_history(history, new_index);
+  } else {
+    int j = 0;
+    j = 20 - index;
+    return get_history(history, j);
   }
   return 0;
 }
@@ -53,7 +78,7 @@ void show_history(History history) {
     for (int i = 0; i < 20; i++) {
       printf("%d ", i + 1);
       for (int k = 0; history->previous_commands[j][k] != NULL; k++) {
-        printf("%s", history->previous_commands[j][k]);
+        printf("%s ", history->previous_commands[j][k]);
       }
       printf("\n");
       j++;
