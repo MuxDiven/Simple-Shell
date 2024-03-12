@@ -68,10 +68,6 @@ int main(int argc, char *argv[]) {
       if (strlen(command[0]) > 1) {
 
         if (command[0][1] == '!') { // user entered '!!'
-          // if (get_history(history, 1) == 0) {
-          //   printf("Invalid entry, there is no command to copy");
-          //   continue;
-          // }
           command = get_previous_history(history);
         } else if (command[0][1] == '-') { // user entered '!-x'
           if (command[0][3] != 0) {        // user entered '!-xx'
@@ -80,17 +76,6 @@ int main(int argc, char *argv[]) {
             sprintf(b, "%d", command[0][3] - 48);
             strcat(a, b);
             int index = atoi(a);
-            // if (history->first == 0) {
-            //   if (index < history->index + 1) {
-            //     printf("Invalid index, please enter a number between 1 and
-            //     %d",
-            //            history->index + 1);
-            //     continue;
-            //   }
-            // } else if (index > 20 || index < 1) {
-            //   printf("Invalid index, please enter a number between 1 and
-            //   20"); continue;
-            // }
             command = get_minus_history(history, index);
           } else {
             command = get_minus_history(history, command[0][2] - 48);
@@ -101,30 +86,8 @@ int main(int argc, char *argv[]) {
           sprintf(b, "%d", command[0][2] - 48);
           strcat(a, b);
           int index = atoi(a);
-          // if (history->first == 0) {
-          //   if (index < history->index + 1) {
-          //     printf("Invalid index, please enter a number between 1 and %d",
-          //            history->index + 1);
-          //     continue;
-          //   }
-          // } else if (index > 20 || index < 1) {
-          //   printf("Invalid index, please enter a number between 1 and 20");
-          //   continue;
-          // }
           command = get_history(history, index);
         } else {
-          // if (history->first == 0) {
-          //   if (command[0][1] < history->index + 1) {
-          //     printf("Invalid index, please enter a number between 1 and %d",
-          //            history->index + 1);
-          //     fflush(stdout);
-          //     continue;
-          //   }
-          // } else if (command[0][1] > 20 || command[0][1] < 1) {
-          //   printf("Invalid index, please enter a number between 1 and 20");
-          //   fflush(stdout);
-          //   continue;
-          // }
           command =
               get_history(history, command[0][1] - 48); // user entered '!x'
         }
