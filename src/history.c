@@ -54,7 +54,7 @@ Tokens get_history(History history, int index) {
 
 Tokens get_previous_history(History history) {
   if (history->index == 0) {
-    return copy_tokens(history->previous_commands[20]);
+    return copy_tokens(history->previous_commands[19]);
   } else {
     return copy_tokens(history->previous_commands[history->index - 1]);
   }
