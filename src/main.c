@@ -113,19 +113,27 @@ int main(int argc, char *argv[]) {
         memmove(command, command + 2, (numtok - 2) * sizeof(char *));
         command[numtok - 2] = NULL;
 
-        if (check_for_alias(aliases, command) == 0) {
-          printf("Adding new alias\n");
-          add_alias(aliases, key, command);
+        int failure = add_alias(aliases, key, command);
+        if (check_for_alias(aliases, key) == 0) {
+          if (!failure) {
+            printf("Adding new alias\n");
+          }
         } else {
-          printf("Overriding alias");
-          add_alias(aliases, key, command);
+          if (!failure) {
+            printf("Alias %s overriden\n", key);
+          }
         }
 
         free(key);
         continue;
       }
     } else if (strcmp(command[0], "unalias") == 0) {
-      int failure = rem_at(aliases, command[2]);
+      if (numtok != 2) {
+        printf("unalias: unexpected amount of parameters\nexpected 1 got %d\n",
+               numtok - 1);
+        continue;
+      }
+      int failure = rem_at(aliases, command[1]);
       if (failure == 1) {
         printf("Alias removed\n");
       } else {
