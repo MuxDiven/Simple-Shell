@@ -3,10 +3,8 @@
 #include <stdlib.h>
 #include <string.h>
 
-// aliases a = {{"cd", NULL}, {"getpath", NULL}, {"setpath", NULL}, {NULL,
-// NULL}};
-//
-//
+#define ALIAS_LIM 10
+
 alias *new_alias(char *key, Tokens command) {
   alias *a = (alias *)malloc(sizeof(alias));
   a->key = malloc(sizeof(char) * (strlen(key) + 1));
@@ -36,6 +34,7 @@ int add_alias(Aliases aliases, char *key, Tokens args) {
     return 0;
   } else {
     head = *aliases;
+    int size = 1;
     while (head->next) {
       if (strcmp(head->key, key) == 0) {
         free_tokens(head->command);
@@ -43,6 +42,16 @@ int add_alias(Aliases aliases, char *key, Tokens args) {
         return 0;
       }
       head = head->next;
+      size++;
+    }
+    if (strcmp(head->key, key) == 0) {
+      free_tokens(head->command);
+      head->command = copy_tokens(args);
+      return 0;
+    }
+    if (size >= ALIAS_LIM) {
+      printf("alias: list full, remove an alias\n");
+      return 1;
     }
     head->next = temp;
     return 0;
@@ -59,7 +68,7 @@ Tokens get_alias_command(Aliases aliases, char *key) {
   return NULL;
 }
 
-alias *rem_alias(Aliases aliases, char *key) {
+alias *rem_alias(Aliases aliases) {
   if (*aliases == NULL) {
     alias *afterHead = (*aliases)->next;
     del_alias(*aliases);
@@ -74,7 +83,15 @@ alias *rem_alias(Aliases aliases, char *key) {
 }
 
 int rem_at(Aliases aliases, char *key) {
+  if (!aliases) {
+    printf("there are no aliases\n");
+    return 0;
+  }
   if (*aliases) {
+    if (strcmp((*aliases)->key, key) == 0) {
+      rem_alias(aliases);
+      return 1;
+    }
     alias *head = *aliases;
     while (head->next) {
       if (strcmp(head->next->key, key) == 0) {
@@ -263,10 +280,10 @@ int add_at_node(AT_List at_list, char *key) {
   return 0;
 }
 
-int check_for_alias(Aliases aliases, Tokens tokens) {
+// TODO:
+int check_for_alias(Aliases aliases, char *key) {
   for (alias *head = *aliases; head != NULL; head = head->next) {
-    if (strcmp(head->key, tokens[0]) == 0) {
-      printf("FOUND");
+    if (strcmp(head->key, key) == 0) {
       return 1;
     }
   }
