@@ -90,7 +90,7 @@ int main(int argc, char *argv[]) {
           for (i = 1; command[0][i] != '\0'; i++) {
             result = result * 10 + (command[0][i] - '0');
           }
-          if (result >= history->count) {
+          if (result >= history->count || result <= 0) {
             printf("history: No history invocation at index %d\n", result);
             continue;
           }
