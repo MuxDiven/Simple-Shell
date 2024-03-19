@@ -16,7 +16,7 @@ History allocate_history() {
 }
 
 void add_history(History history, Tokens tokens) {
-  if (history->previous_commands[history->index] == NULL) {
+  if (history->size != history->count) {
     history->previous_commands[history->index] = copy_tokens(tokens);
   } else {
     free_tokens(history->previous_commands[history->index]);
