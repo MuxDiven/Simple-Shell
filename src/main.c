@@ -170,6 +170,10 @@ int main(int argc, char *argv[]) {
       }
       continue;
     } else if (strcmp(command[0], "history") == 0) {
+      if (numtok != 1) {
+        printf("history: Unexpected number of arguments\n");
+        continue;
+      }
       show_history(history);
       continue;
     }
