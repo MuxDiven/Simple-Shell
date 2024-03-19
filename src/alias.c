@@ -68,6 +68,15 @@ Tokens get_alias_command(Aliases aliases, char *key) {
   return NULL;
 }
 
+int check_for_alias(Aliases aliases, char *key) {
+  for (alias *head = *aliases; head != NULL; head = head->next) {
+    if (strcmp(head->key, key) == 0) {
+      return 1;
+    }
+  }
+  return 0;
+}
+
 alias *rem_alias(Aliases aliases) {
   if (*aliases == NULL) {
     alias *afterHead = (*aliases)->next;
@@ -277,16 +286,6 @@ int add_at_node(AT_List at_list, char *key) {
     head = head->next;
   }
   head->next = temp;
-  return 0;
-}
-
-// TODO:
-int check_for_alias(Aliases aliases, char *key) {
-  for (alias *head = *aliases; head != NULL; head = head->next) {
-    if (strcmp(head->key, key) == 0) {
-      return 1;
-    }
-  }
   return 0;
 }
 

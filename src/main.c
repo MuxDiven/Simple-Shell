@@ -68,28 +68,23 @@ int main(int argc, char *argv[]) {
       if (strlen(command[0]) > 1) {
 
         if (command[0][1] == '!') { // user entered '!!'
-          command = get_previous_history(history);
+          command = get_previous_history(history, &numtok);
         } else if (command[0][1] == '-') { // user entered '!-x'
-          if (command[0][3] != 0) {        // user entered '!-xx'
-            char a[2], b[2];
-            sprintf(a, "%d", command[0][2] - 48);
-            sprintf(b, "%d", command[0][3] - 48);
-            strcat(a, b);
-            int index = atoi(a);
-            command = get_minus_history(history, index);
-          } else {
-            command = get_minus_history(history, command[0][2] - 48);
+          //
+          int i, result = 0;
+
+          for (i = 2; command[0][i] != '\0'; i++) {
+            result = result * 10 + (command[0][i] - '0');
           }
-        } else if (command[0][2] != 0) { // user entered '!xx'
-          char a[2], b[2];
-          sprintf(a, "%d", command[0][1] - 48);
-          sprintf(b, "%d", command[0][2] - 48);
-          strcat(a, b);
-          int index = atoi(a);
-          command = get_history(history, index);
+          command = get_minus_history(history, result, &numtok);
+
         } else {
-          command =
-              get_history(history, command[0][1] - 48); // user entered '!x'
+          int i, result = 0;
+
+          for (i = 1; command[0][i] != '\0'; i++) {
+            result = result * 10 + (command[0][i] - '0');
+          }
+          command = get_history(history, result, &numtok);
         }
       }
     }
@@ -113,13 +108,12 @@ int main(int argc, char *argv[]) {
         memmove(command, command + 2, (numtok - 2) * sizeof(char *));
         command[numtok - 2] = NULL;
 
-        int failure = add_alias(aliases, key, command);
         if (check_for_alias(aliases, key) == 0) {
-          if (!failure) {
+          if (!add_alias(aliases, key, command)) {
             printf("Adding new alias\n");
           }
         } else {
-          if (!failure) {
+          if (!add_alias(aliases, key, command)) {
             printf("Alias %s overriden\n", key);
           }
         }

@@ -87,3 +87,11 @@ char *tokens_to_string(Tokens tokens) {
   }
   return line;
 }
+
+int count_tokens(Tokens tokens) {
+  int count = 0;
+  while (tokens[count] != NULL) {
+    count++;
+  }
+  return count;
+}

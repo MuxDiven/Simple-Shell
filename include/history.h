@@ -16,11 +16,11 @@ History allocate_history();
 
 void add_history(History history, Tokens tokens);
 
-Tokens get_history(History history, int index);
+Tokens get_history(History history, int index, int *num_tokens);
 
-Tokens get_previous_history(History history);
+Tokens get_previous_history(History history, int *num_tokens);
 
-Tokens get_minus_history(History history, int index);
+Tokens get_minus_history(History history, int index, int *num_tokens);
 
 void show_history(History history);
 
