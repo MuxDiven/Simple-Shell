@@ -68,6 +68,10 @@ int main(int argc, char *argv[]) {
       if (strlen(command[0]) > 1) {
 
         if (command[0][1] == '!') { // user entered '!!'
+          if (history->count == 0) {
+            printf("history: No previous command to call\n");
+            continue;
+          }
           command = get_previous_history(history, &numtok);
         } else if (command[0][1] == '-') { // user entered '!-x'
           //
