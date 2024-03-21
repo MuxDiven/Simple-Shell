@@ -1,3 +1,4 @@
+#include "history.h"
 #include "utils.h"
 
 typedef struct alias {
@@ -22,7 +23,7 @@ void del_alias(alias *tail);
 void show_aliases(Aliases aliases);
 Aliases read_aliases(char *filepath);
 int check_for_alias(Aliases aliases, char *key);
-int alias_transform(Aliases, Tokens *tokens, int *num_tokens);
+int alias_transform(Aliases, History h, Tokens *tokens, int *num_tokens);
 void free_alias_node(alias *node);
 void clear_aliases(Aliases aliases);
 void free_aliases(Aliases aliases);

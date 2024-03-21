@@ -15,6 +15,54 @@ History allocate_history() {
   return h;
 }
 
+Tokens parse_history_input(History history, char *input) {
+
+  if (input[0] == '!') {
+
+    if (strlen(input) > 1) {
+
+      if (input[1] == '!') { // user entered '!!'
+        return get_previous_history(history);
+      } else if (input[1] == '-') { // user entered '!-x'
+        //
+        int i, result = 0;
+
+        for (i = 2; input[i] != '\0'; i++) {
+          result = result * 10 + (input[i] - '0');
+        }
+
+        if (result >= history->count) {
+          printf("history: No history invocation at index -%d\n", result);
+          return NULL;
+        }
+
+        return get_minus_history(history, result);
+
+      } else {
+        int i, result = 0;
+
+        for (i = 1; input[i] != '\0'; i++) {
+          result = result * 10 + (input[i] - '0');
+        }
+        if (result > history->count || result <= 0) {
+          printf("history: No history invocation at index %d\n", result);
+          return NULL;
+        }
+        return get_history(history, result);
+      }
+    }
+  }
+  return NULL;
+}
+
+int is_history_invocation(char *input) {
+  if (strlen(input) > 0) {
+    if (input[0] == '!')
+      return 1;
+  }
+  return 0;
+}
+
 void add_history(History history, Tokens tokens) {
   if (history->size != history->count) {
     history->previous_commands[history->index] = copy_tokens(tokens);
@@ -36,10 +84,9 @@ void add_history(History history, Tokens tokens) {
   }
 }
 
-Tokens get_history(History history, int index, int *num_tokens) {
+Tokens get_history(History history, int index) {
   if (history->previous_commands[history->index + 1] == NULL) {
     Tokens tokens = copy_tokens(history->previous_commands[index - 1]);
-    *num_tokens = count_tokens(tokens);
     return tokens;
   } else {
     int j = 0;
@@ -49,33 +96,30 @@ Tokens get_history(History history, int index, int *num_tokens) {
     }
     if (history->previous_commands[j] != 0) {
       Tokens tokens = copy_tokens(history->previous_commands[j]);
-      *num_tokens = count_tokens(tokens);
       return tokens;
     }
   }
   return 0;
 }
 
-Tokens get_previous_history(History history, int *num_tokens) {
+Tokens get_previous_history(History history) {
   if (history->index == 0) {
     Tokens tokens = copy_tokens(history->previous_commands[19]);
-    *num_tokens = count_tokens(tokens);
     return tokens;
   } else {
     Tokens tokens = copy_tokens(history->previous_commands[history->index - 1]);
-    *num_tokens = count_tokens(tokens);
     return tokens;
   }
 }
 
-Tokens get_minus_history(History history, int index, int *num_tokens) {
+Tokens get_minus_history(History history, int index) {
   if (history->previous_commands[history->index + 1] == NULL) {
     int new_index = history->index - index;
-    return get_history(history, new_index, num_tokens);
+    return get_history(history, new_index);
   } else {
     int j = 0;
     j = 20 - index;
-    return get_history(history, j, num_tokens);
+    return get_history(history, j);
   }
   return 0;
 }

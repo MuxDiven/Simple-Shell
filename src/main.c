@@ -1,7 +1,6 @@
 #include "../include/main.h"
 #include "../include/alias.h"
 #include "../include/built-ins.h"
-#include "../include/history.h"
 #include "../include/utils.h"
 #include <stdio.h>
 #include <stdlib.h>
@@ -59,53 +58,27 @@ int main(int argc, char *argv[]) {
       continue;
     }
 
-    int add_to_history = 0;
+    int add_to_history = 1;
 
-    // history commands
-    if (command[0][0] == '!') {
-
-      add_to_history = 1;
-      if (strlen(command[0]) > 1) {
-
-        if (command[0][1] == '!') { // user entered '!!'
-          command = get_previous_history(history, &numtok);
-        } else if (command[0][1] == '-') { // user entered '!-x'
-          //
-          int i, result = 0;
-
-          for (i = 2; command[0][i] != '\0'; i++) {
-            result = result * 10 + (command[0][i] - '0');
-          }
-
-          if (result >= history->count) {
-            printf("history: No history invocation at index -%d\n", result);
-            continue;
-          }
-
-          command = get_minus_history(history, result, &numtok);
-
-        } else {
-          int i, result = 0;
-
-          for (i = 1; command[0][i] != '\0'; i++) {
-            result = result * 10 + (command[0][i] - '0');
-          }
-          if (result >= history->count || result <= 0) {
-            printf("history: No history invocation at index %d\n", result);
-            continue;
-          }
-          command = get_history(history, result, &numtok);
-        }
+    for (int i = 0; command[i] != NULL; i++) {
+      if (is_history_invocation(command[i])) {
+        add_to_history = 0;
       }
     }
 
-    if (add_to_history != 1) {
-      add_history(history, command);
+    Tokens original_command = copy_tokens(command);
+
+    if (alias_transform(aliases, history, &command, &numtok) == 1) {
+      add_history(history, original_command);
+      continue;
     }
 
     // aliases
     if (strcmp(command[0], "alias") == 0) {
       if (numtok == 1) {
+        if (add_to_history) {
+          add_history(history, original_command);
+        }
         show_aliases(aliases);
         continue;
       } else if (numtok == 2) {
@@ -120,10 +93,16 @@ int main(int argc, char *argv[]) {
 
         if (check_for_alias(aliases, key) == 0) {
           if (!add_alias(aliases, key, command)) {
+            if (add_to_history) {
+              add_history(history, original_command);
+            }
             printf("Adding new alias\n");
           }
         } else {
           if (!add_alias(aliases, key, command)) {
+            if (add_to_history) {
+              add_history(history, original_command);
+            }
             printf("Alias %s overriden\n", key);
           }
         }
@@ -135,6 +114,9 @@ int main(int argc, char *argv[]) {
       if (numtok != 2) {
         printf("unalias: unexpected amount of parameters\nexpected 1 got %d\n",
                numtok - 1);
+        if (add_to_history) {
+          add_history(history, original_command);
+        }
         continue;
       }
       int failure = rem_at(aliases, command[1]);
@@ -143,13 +125,58 @@ int main(int argc, char *argv[]) {
       } else {
         printf("Alias not found\n");
       }
+      if (add_to_history) {
+        add_history(history, original_command);
+      }
       continue;
     }
 
-    if (alias_transform(aliases, &command, &numtok) == 1) {
-      printf("Cyclic alias detected: aborting\n");
-      continue;
+    if (add_to_history) {
+      add_history(history, original_command);
     }
+
+    //
+    // if (alias_transform(aliases, &command, &numtok) == 1) {
+    //   printf("Cyclic alias detected: aborting\n");
+    //   continue;
+    // }
+    //
+    // // history commands
+    // if (command[0][0] == '!') {
+    //
+    //   if (strlen(command[0]) > 1) {
+    //
+    //     if (command[0][1] == '!') { // user entered '!!'
+    //       command = get_previous_history(history, &numtok);
+    //     } else if (command[0][1] == '-') { // user entered '!-x'
+    //       //
+    //       int i, result = 0;
+    //
+    //       for (i = 2; command[0][i] != '\0'; i++) {
+    //         result = result * 10 + (command[0][i] - '0');
+    //       }
+    //
+    //       if (result >= history->count) {
+    //         printf("history: No history invocation at index -%d\n", result);
+    //         continue;
+    //       }
+    //
+    //       command = get_minus_history(history, result, &numtok);
+    //
+    //     } else {
+    //       int i, result = 0;
+    //
+    //       for (i = 1; command[0][i] != '\0'; i++) {
+    //         result = result * 10 + (command[0][i] - '0');
+    //       }
+    //       if (result > history->count || result <= 0) {
+    //         printf("history: No history invocation at index %d\n", result);
+    //         continue;
+    //       }
+    //       command = get_history(history, result, &numtok);
+    //     }
+    //   }
+    // }
 
     // built in commands
     if (strcmp(command[0], "exit") == 0) {
