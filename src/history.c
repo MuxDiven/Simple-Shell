@@ -26,12 +26,12 @@ Tokens parse_history_input(History history, char *input) {
           return get_previous_history(history);
         }
         return NULL;
-      } else if (input[1] == '-') { // user entered '!-x'
+      } else if (input[1] == '-') { // user entered '!-x' or '!-xx'
 
         int i, result = 0;
 
         for (i = 2; input[i] != '\0';
-             i++) { // this part concatenates the characters following the '!''
+             i++) { // this part concatenates the characters following the '!'
           if (input[i] < 48 ||
               input[i] > 57) { // if the character isn't a number
             printf("history: %s is not a number\n", input + 2);
@@ -40,14 +40,16 @@ Tokens parse_history_input(History history, char *input) {
           result = result * 10 + (input[i] - '0');
         }
 
-        if (result >= history->count || result < 1) {
+        if (result >= history->count ||
+            result < 1) { // error handling for when user tries to call an item
+                          // from history that doesn't exist
           printf("history: No history invocation at index -%d\n", result);
           return NULL;
         }
 
         return get_minus_history(history, result);
 
-      } else {
+      } else { // user entered '!x' or '!xx'
         int i, result = 0;
 
         for (i = 1; input[i] != '\0'; i++) {
@@ -96,11 +98,13 @@ void add_history(History history, Tokens tokens) {
   history->index++;
   history->count++;
   if (history->count ==
-      21) { // count is used to track the number of items stored in history
-    history->count = 20; // when there are 20 items in the history we start
-                         // tracking first, which is the
-    history->first++;    // index of the first item in to be displayed in the
-                         // history and can be iterated from there
+      21) { // count is used to track the number of items stored in history,
+            // when it gets to 20 for the first time it stays there
+    history->count =
+        20; // when there are 20 items in the history we start tracking first,
+            // which is the index of the first item in to be displayed in the
+            // history and can be iterated from there
+    history->first++;
     if (history->first == 20) {
       history->first = 0;
     }
@@ -111,7 +115,7 @@ void add_history(History history, Tokens tokens) {
 }
 
 Tokens get_history(History history, int index) {
-  if (history->previous_commands[history->index + 1] == NULL) {
+  if (history->count != 20) {
     Tokens tokens = copy_tokens(history->previous_commands[index - 1]);
     return tokens;
   } else {
@@ -129,7 +133,9 @@ Tokens get_history(History history, int index) {
 }
 
 Tokens get_previous_history(History history) {
-  if (history->index == 0) {
+  if (history->index ==
+      0) { // if the index is 0, meaning the last called history item is stored
+           // on the other end of the array
     Tokens tokens = copy_tokens(history->previous_commands[19]);
     return tokens;
   } else {
@@ -154,9 +160,9 @@ Tokens get_minus_history(History history,
 
 void show_history(History history) {
   int j = history->index;
-  if (history->previous_commands[history->index + 1] !=
-      NULL) { // if the history has reached 20 and is now replacing
-    for (int i = 0; i < 20; i++) { // items it needs different computation
+  if (history->count == 20) { // if the history has reached 20 and is now
+                              // replacing items it needs different computation
+    for (int i = 0; i < 20; i++) {
       printf("%d ", i + 1);
       for (int k = 0; history->previous_commands[j][k] != NULL; k++) {
         printf("%s ", history->previous_commands[j][k]);
