@@ -38,7 +38,7 @@ Tokens parse_history_input(History history, char *input) {
           result = result * 10 + (input[i] - '0');
         }
 
-        if (result >= history->count) {
+        if (result >= history->count || result < 1) {
           printf("history: No history invocation at index -%d\n", result);
           return NULL;
         }
@@ -81,12 +81,6 @@ int is_history_invocation(char *input) {
       return 1;
     }
   }
-  // if (strlen(input) == 2) {
-  //   if (strcmp(input, "!!") == 1) {
-  //     printf("const char *restrict, ...");
-  //     return 1;
-  //   }
-  // }
   return 0;
 }
 
@@ -141,11 +135,11 @@ Tokens get_previous_history(History history) {
 
 Tokens get_minus_history(History history, int index) {
   if (history->previous_commands[history->index + 1] == NULL) {
-    int new_index = history->index - index;
+    int new_index = history->index - index + 1;
     return get_history(history, new_index);
   } else {
     int j = 0;
-    j = 20 - index;
+    j = 20 - index + 1;
     return get_history(history, j);
   }
   return 0;
