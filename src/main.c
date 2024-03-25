@@ -138,19 +138,13 @@ int main(int argc, char *argv[]) {
     if (strcmp(command[0], "exit") == 0) {
       break;
     } else if (strcmp(command[0], "cd") == 0) {
-      if (cd(command, numtok) == 1) {
-        printf("FAILED\n");
-      }
+      cd(command, numtok);
       continue;
     } else if (strcmp(command[0], "getpath") == 0) {
-      if (getpath(command, numtok) == 1) {
-        printf("FAILED\n");
-      }
+      getpath(command, numtok);
       continue;
     } else if (strcmp(command[0], "setpath") == 0) {
-      if (setpath(command, numtok) == 1) {
-        printf("FAILED\n");
-      }
+      setpath(command, numtok);
       continue;
     } else if (strcmp(command[0], "history") == 0) {
       if (numtok != 1) {
