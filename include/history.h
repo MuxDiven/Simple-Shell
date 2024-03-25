@@ -14,13 +14,17 @@ typedef struct h *History;
 
 History allocate_history();
 
+Tokens parse_history_input(History history, char *input);
+
+int is_history_invocation(char *input);
+
 void add_history(History history, Tokens tokens);
 
-Tokens get_history(History history, int index, int *num_tokens);
+Tokens get_history(History history, int index);
 
-Tokens get_previous_history(History history, int *num_tokens);
+Tokens get_previous_history(History history);
 
-Tokens get_minus_history(History history, int index, int *num_tokens);
+Tokens get_minus_history(History history, int index);
 
 void show_history(History history);
 

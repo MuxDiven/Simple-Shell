@@ -1,4 +1,4 @@
-#include "utils.h"
+#include "history.h"
 
 typedef struct alias {
   char *key;      // original command
@@ -22,7 +22,6 @@ void del_alias(alias *tail);
 void show_aliases(Aliases aliases);
 Aliases read_aliases(char *filepath);
 int check_for_alias(Aliases aliases, char *key);
-int alias_transform(Aliases, Tokens *tokens, int *num_tokens);
 void free_alias_node(alias *node);
 void clear_aliases(Aliases aliases);
 void free_aliases(Aliases aliases);
@@ -32,6 +31,7 @@ typedef struct at_node {
   struct at_node *next;
 } at_node;
 
+int command_transform(Aliases, History h, Tokens *tokens, int *num_tokens);
 typedef struct at_node **AT_List;
 AT_List allocate_at_list();
 at_node *new_at_node(char *key);

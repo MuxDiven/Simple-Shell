@@ -1,4 +1,5 @@
 #include "../include/utils.h"
+#include "../include/alias.h"
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
@@ -25,13 +26,6 @@ Tokens copy_tokens(Tokens tokens) {
       }
     }
     copy[i] = strdup(tokens[i]);
-    // copy[i] = (char *)malloc((strlen(tokens[i]) + 1) * sizeof(char));
-    // if (!copy[i]) {
-    //   free(copy);
-    //   printf("memory allocation failed\n");
-    //   return NULL;
-    // }
-    // strcpy(copy[i], tokens[i]);
   }
   copy[i] = NULL;
   return copy;
