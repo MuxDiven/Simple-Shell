@@ -84,7 +84,7 @@ int main(int argc, char *argv[]) {
         show_aliases(aliases);
         continue;
       } else if (numtok == 2) {
-        printf("Error parsing alias command\n");
+        printf("alias: Unexpected number of parameters\n");
         continue;
       } else {
         char *key;
