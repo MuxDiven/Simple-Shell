@@ -147,7 +147,7 @@ Tokens get_minus_history(History history, int index) {
 
 void show_history(History history) {
   int j = history->index;
-  if (history->previous_commands[history->index + 1] != NULL) {
+  if (history->count == 20) {
     for (int i = 0; i < 20; i++) {
       printf("%d ", i + 1);
       for (int k = 0; history->previous_commands[j][k] != NULL; k++) {
