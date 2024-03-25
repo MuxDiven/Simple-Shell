@@ -68,8 +68,10 @@ int main(int argc, char *argv[]) {
 
     Tokens original_command = copy_tokens(command);
 
-    if (alias_transform(aliases, history, &command, &numtok) == 1) {
-      add_history(history, original_command);
+    if (command_transform(aliases, history, &command, &numtok) == 1) {
+      if (add_to_history) {
+        add_history(history, original_command);
+      }
       continue;
     }
 
@@ -93,20 +95,17 @@ int main(int argc, char *argv[]) {
 
         if (check_for_alias(aliases, key) == 0) {
           if (!add_alias(aliases, key, command)) {
-            if (add_to_history) {
-              add_history(history, original_command);
-            }
             printf("Adding new alias\n");
           }
         } else {
           if (!add_alias(aliases, key, command)) {
-            if (add_to_history) {
-              add_history(history, original_command);
-            }
             printf("Alias %s overriden\n", key);
           }
         }
 
+        if (add_to_history) {
+          add_history(history, original_command);
+        }
         free(key);
         continue;
       }
@@ -134,49 +133,6 @@ int main(int argc, char *argv[]) {
     if (add_to_history) {
       add_history(history, original_command);
     }
-
-    //
-    // if (alias_transform(aliases, &command, &numtok) == 1) {
-    //   printf("Cyclic alias detected: aborting\n");
-    //   continue;
-    // }
-    //
-    // // history commands
-    // if (command[0][0] == '!') {
-    //
-    //   if (strlen(command[0]) > 1) {
-    //
-    //     if (command[0][1] == '!') { // user entered '!!'
-    //       command = get_previous_history(history, &numtok);
-    //     } else if (command[0][1] == '-') { // user entered '!-x'
-    //       //
-    //       int i, result = 0;
-    //
-    //       for (i = 2; command[0][i] != '\0'; i++) {
-    //         result = result * 10 + (command[0][i] - '0');
-    //       }
-    //
-    //       if (result >= history->count) {
-    //         printf("history: No history invocation at index -%d\n", result);
-    //         continue;
-    //       }
-    //
-    //       command = get_minus_history(history, result, &numtok);
-    //
-    //     } else {
-    //       int i, result = 0;
-    //
-    //       for (i = 1; command[0][i] != '\0'; i++) {
-    //         result = result * 10 + (command[0][i] - '0');
-    //       }
-    //       if (result > history->count || result <= 0) {
-    //         printf("history: No history invocation at index %d\n", result);
-    //         continue;
-    //       }
-    //       command = get_history(history, result, &numtok);
-    //     }
-    //   }
-    // }
 
     // built in commands
     if (strcmp(command[0], "exit") == 0) {
@@ -218,6 +174,7 @@ int main(int argc, char *argv[]) {
     }
 
     free_tokens(command);
+    free_tokens(original_command);
   }
 
   printf("%s\n", originalPATH);
@@ -235,7 +192,6 @@ int main(int argc, char *argv[]) {
 }
 
 // should probably abstract this to a different file with the tokenizer
-// function
 int get_line(char *line) {
   if (fgets(line, LINE_SIZE, stdin) == NULL)
     return EOF;

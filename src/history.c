@@ -22,12 +22,19 @@ Tokens parse_history_input(History history, char *input) {
     if (strlen(input) > 1) {
 
       if (input[1] == '!') { // user entered '!!'
-        return get_previous_history(history);
+        if (strlen(input) == 2) {
+          return get_previous_history(history);
+        }
+        return NULL;
       } else if (input[1] == '-') { // user entered '!-x'
         //
         int i, result = 0;
 
         for (i = 2; input[i] != '\0'; i++) {
+          if (input[i] < 48 || input[i] > 57) {
+            printf("history: %s is not a number\n", input + 2);
+            return NULL;
+          }
           result = result * 10 + (input[i] - '0');
         }
 
@@ -42,6 +49,10 @@ Tokens parse_history_input(History history, char *input) {
         int i, result = 0;
 
         for (i = 1; input[i] != '\0'; i++) {
+          if (input[i] < 48 || input[i] > 57) {
+            printf("history: %s is not a number\n", input + 1);
+            return NULL;
+          }
           result = result * 10 + (input[i] - '0');
         }
         if (result > history->count || result <= 0) {
@@ -56,10 +67,26 @@ Tokens parse_history_input(History history, char *input) {
 }
 
 int is_history_invocation(char *input) {
-  if (strlen(input) > 0) {
-    if (input[0] == '!')
-      return 1;
+  if (strlen(input) == 2 && input[0] == '!' && input[1] == '1') {
+    return 1;
   }
+  if (strlen(input) >= 1) {
+    if (strlen(input) >= 2) {
+      if (input[0] == '!' && input[1] == '!') {
+        if (strlen(input) != 2)
+          return 0;
+      }
+    }
+    if (input[0] == '!') {
+      return 1;
+    }
+  }
+  // if (strlen(input) == 2) {
+  //   if (strcmp(input, "!!") == 1) {
+  //     printf("const char *restrict, ...");
+  //     return 1;
+  //   }
+  // }
   return 0;
 }
 

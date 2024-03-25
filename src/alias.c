@@ -199,8 +199,24 @@ void show_aliases(Aliases aliases) {
   }
 }
 
-int alias_transform(Aliases aliases, History history, Tokens *tokens,
-                    int *num_tokens) {
+void clear_aliases(Aliases aliases) {
+  alias *temp;
+  alias *head = *aliases;
+  while (head != NULL) {
+    temp = head->next;
+    free_alias_node(head);
+    head = temp;
+  }
+  *aliases = NULL;
+}
+
+void free_aliases(Aliases aliases) {
+  clear_aliases(aliases);
+  free(*aliases);
+}
+
+int command_transform(Aliases aliases, History history, Tokens *tokens,
+                      int *num_tokens) {
 
   int expansion_scalar =
       0; // this is the updated after a token transformation has been done
@@ -235,7 +251,7 @@ int alias_transform(Aliases aliases, History history, Tokens *tokens,
       while (to_insert[num_alias_tokens] != NULL) {
         if (strcmp(to_insert[num_alias_tokens], (*tokens)[i + j]) == 0) {
           free_at_list(at_list);
-          printf("Cyclic alias detected: aborting\n");
+          printf("cycle detected: aborting\n");
           return 1;
         }
         num_alias_tokens++;
@@ -243,8 +259,7 @@ int alias_transform(Aliases aliases, History history, Tokens *tokens,
 
       if (contains_at_node(at_list, (*tokens)[i + j]) == 1) {
         free_at_list(at_list);
-
-        printf("Cyclic alias detected: aborting\n");
+        printf("cycle detected: aborting\n");
         return 1;
       }
       add_at_node(at_list, (*tokens)[i + j]);
@@ -330,22 +345,6 @@ void free_at_node(at_node *node) {
   free(node->key);
   free(node);
   node = NULL;
-}
-
-void clear_aliases(Aliases aliases) {
-  alias *temp;
-  alias *head = *aliases;
-  while (head != NULL) {
-    temp = head->next;
-    free_alias_node(head);
-    head = temp;
-  }
-  *aliases = NULL;
-}
-
-void free_aliases(Aliases aliases) {
-  clear_aliases(aliases);
-  free(*aliases);
 }
 
 void clear_at_list(AT_List at_list) {
