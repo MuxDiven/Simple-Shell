@@ -17,7 +17,7 @@ History allocate_history() {
 
 Tokens parse_history_input(History history, char *input) {
 
-  if (input[0] == '!') {
+  if (input[0] == '!') { // if the command is a history command
 
     if (strlen(input) > 1) {
 
@@ -27,11 +27,13 @@ Tokens parse_history_input(History history, char *input) {
         }
         return NULL;
       } else if (input[1] == '-') { // user entered '!-x'
-        //
+
         int i, result = 0;
 
-        for (i = 2; input[i] != '\0'; i++) {
-          if (input[i] < 48 || input[i] > 57) {
+        for (i = 2; input[i] != '\0';
+             i++) { // this part concatenates the characters following the '!''
+          if (input[i] < 48 ||
+              input[i] > 57) { // if the character isn't a number
             printf("history: %s is not a number\n", input + 2);
             return NULL;
           }
@@ -93,9 +95,12 @@ void add_history(History history, Tokens tokens) {
   }
   history->index++;
   history->count++;
-  if (history->count == 21) { // push history content up and append
-    history->count = 20;
-    history->first++;
+  if (history->count ==
+      21) { // count is used to track the number of items stored in history
+    history->count = 20; // when there are 20 items in the history we start
+                         // tracking first, which is the
+    history->first++;    // index of the first item in to be displayed in the
+                         // history and can be iterated from there
     if (history->first == 20) {
       history->first = 0;
     }
@@ -133,7 +138,9 @@ Tokens get_previous_history(History history) {
   }
 }
 
-Tokens get_minus_history(History history, int index) {
+Tokens get_minus_history(History history,
+                         int index) { // this changes the index and then calls
+                                      // get_history to do the rest
   if (history->previous_commands[history->index + 1] == NULL) {
     int new_index = history->index - index + 1;
     return get_history(history, new_index);
@@ -147,22 +154,26 @@ Tokens get_minus_history(History history, int index) {
 
 void show_history(History history) {
   int j = history->index;
-  if (history->previous_commands[history->index + 1] != NULL) {
-    for (int i = 0; i < 20; i++) {
+  if (history->previous_commands[history->index + 1] !=
+      NULL) { // if the history has reached 20 and is now replacing
+    for (int i = 0; i < 20; i++) { // items it needs different computation
       printf("%d ", i + 1);
       for (int k = 0; history->previous_commands[j][k] != NULL; k++) {
         printf("%s ", history->previous_commands[j][k]);
       }
       printf("\n");
       j++;
-      if (j == 20) {
+      if (j == 20) { // this helps keep track once we get past the 20 mark while
+                     // keeping the history printed in the correct order
         j = 0;
       }
     }
-  } else {
+  } else { // this is for if the history hasn't reached 20 and so everything is
+           // stored in line with the history->index
     for (int i = 0; i < history->index; i++) {
       printf("%d ", i + 1);
-      for (int k = 0; history->previous_commands[i][k] != NULL; k++) {
+      for (int k = 0; history->previous_commands[i][k] != NULL;
+           k++) { // print all arguments of the command
         printf("%s ", history->previous_commands[i][k]);
       }
       printf("\n");
@@ -201,7 +212,7 @@ int save_history(History h, char *filepath) {
   return 1;
 
 } // save history from instance of struct into file
-//
+
 // load history from file into instance of history struct
 History load_history(char *filepath) {
 
