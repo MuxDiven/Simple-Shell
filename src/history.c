@@ -85,15 +85,15 @@ int is_history_invocation(char *input) {
 }
 
 void add_history(History history, Tokens tokens) {
-  if (history->size != history->count) {
+  if (history->size != history->count) { // append
     history->previous_commands[history->index] = copy_tokens(tokens);
   } else {
     free_tokens(history->previous_commands[history->index]);
     history->previous_commands[history->index] = copy_tokens(tokens);
   }
   history->index++;
-  history->count++; // gave history count a use :)
-  if (history->count == 21) {
+  history->count++;
+  if (history->count == 21) { // push history content up and append
     history->count = 20;
     history->first++;
     if (history->first == 20) {

@@ -36,7 +36,7 @@ int add_alias(Aliases aliases, char *key, Tokens args) {
     head = *aliases;
     int size = 1;
     while (head->next) {
-      if (strcmp(head->key, key) == 0) {
+      if (strcmp(head->key, key) == 0) { // if alias exists override
         free_tokens(head->command);
         head->command = copy_tokens(args);
         return 0;
@@ -44,6 +44,7 @@ int add_alias(Aliases aliases, char *key, Tokens args) {
       head = head->next;
       size++;
     }
+    // check override condition on last item in the list
     if (strcmp(head->key, key) == 0) {
       free_tokens(head->command);
       head->command = copy_tokens(args);
@@ -53,6 +54,7 @@ int add_alias(Aliases aliases, char *key, Tokens args) {
       printf("alias: list full, remove an alias\n");
       return 1;
     }
+    // push to end of list
     head->next = temp;
     return 0;
   }
@@ -122,7 +124,7 @@ int rem_at(Aliases aliases, char *key) {
 Aliases read_aliases(char *filepath) {
   FILE *fptr = fopen(filepath, "r");
   Aliases a = allocate_aliases();
-  if (!fptr)
+  if (!fptr) // file doesn't exist, return empty alias list
     return a;
 
   int c = 1;
@@ -134,7 +136,7 @@ Aliases read_aliases(char *filepath) {
 
     while ((c = fgetc(fptr)) != '\n' && c > 0) {
       if (i == buffer) {
-        buffer <<= 1;
+        buffer <<= 1; // double buffer
         push = realloc(push, buffer);
       }
       push[i++] = c;
@@ -163,7 +165,7 @@ Aliases read_aliases(char *filepath) {
 
 int save_aliases(Aliases aliases, char *filename) {
   FILE *fptr = fopen(filename, "w");
-  if (fptr == NULL)
+  if (fptr == NULL) // file does not exist
     return 0;
 
   alias *head = *aliases;
@@ -270,14 +272,14 @@ int command_transform(Aliases aliases, History history, Tokens *tokens,
       *tokens =
           (Tokens)realloc((*tokens), ((*num_tokens) * sizeof(char *)) + 1);
 
-      // then memmve it allong num_alias_tokens
+      // then memmove it allong num_alias_tokens
       memmove(
           *tokens + (i + j + expansion_scalar) + (num_alias_tokens - 1),
           *tokens + (i + j + expansion_scalar),
           (*num_tokens - (num_alias_tokens - 1) - (i + j + expansion_scalar)) *
               sizeof(char *));
 
-      // then cpy in everything
+      // then copy in everything
       for (int k = 0; to_insert[k] != NULL; k++) {
         (*tokens)[i + j + k + expansion_scalar] = strdup(to_insert[k]);
       }
