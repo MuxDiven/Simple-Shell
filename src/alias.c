@@ -227,6 +227,9 @@ int command_transform(Aliases aliases, History history, Tokens *tokens,
   for (int i = 0; i < (*num_tokens);) {
     int j = 0;
 
+    // if we are performing the transform on the first command double check for
+    // the special case that we follow a chain to get to alias or unalias if we
+    // do then stop all transformation
     if (i == 0) {
       if (strcmp((*tokens)[i], "alias") == 0 ||
           strcmp((*tokens)[i], "unalias") == 0) {
@@ -237,20 +240,28 @@ int command_transform(Aliases aliases, History history, Tokens *tokens,
 
     Tokens to_insert = NULL;
 
+    // check if the token is a history invocation
     int is_history = is_history_invocation((*tokens)[i + expansion_scalar]);
 
+    // if it is retrieve it
     if (is_history) {
       to_insert = parse_history_input(history, (*tokens)[i + expansion_scalar]);
+      // if we fail to get it return an error
       if (to_insert == NULL) {
         return 1;
       }
     } else {
+      // if it is not a history command check if it is an alias
       to_insert = get_alias_command(aliases, (*tokens)[i + expansion_scalar]);
     }
 
+    // if there is a valid replacement
     if (to_insert) {
       int num_alias_tokens = 0;
+      // iterate through the command to insert
       while (to_insert[num_alias_tokens] != NULL) {
+        // make sure that the command that is being inserted was not the key to
+        // what was being inserted prevents cycles a -> a b
         if (strcmp(to_insert[num_alias_tokens], (*tokens)[i + j]) == 0) {
           free_at_list(at_list);
           printf("cycle detected: aborting\n");
@@ -259,13 +270,17 @@ int command_transform(Aliases aliases, History history, Tokens *tokens,
         num_alias_tokens++;
       }
 
+      // check we haven't already seen the transformation again
+      // if we have return error for cycle
       if (contains_at_node(at_list, (*tokens)[i + j]) == 1) {
         free_at_list(at_list);
         printf("cycle detected: aborting\n");
         return 1;
       }
+      // add the transform to a linked list to be able to detect later cycles
       add_at_node(at_list, (*tokens)[i + j]);
 
+      // increase the number of tokens to deal with the command to insert
       *num_tokens += (num_alias_tokens - 1);
 
       // we need to resize the original to have engouh space
@@ -288,10 +303,13 @@ int command_transform(Aliases aliases, History history, Tokens *tokens,
     } else {
       i++;
       expansion_scalar += j;
+      // finished the expansion on a specfic index therefore clear the list of
+      // transforms
       clear_at_list(at_list);
     }
   }
 
+  // set null at the end of the list to be extra safe
   (*tokens)[(*num_tokens)] = NULL;
   free_at_list(at_list);
 
