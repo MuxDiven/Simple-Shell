@@ -81,9 +81,8 @@ int main(int argc, char *argv[]) {
         }
         show_aliases(aliases);
         continue;
-      } else if (numtok ==
-                 2) { // alias command is only given a key in arguments
-        printf("Error parsing alias command\n");
+      } else if (numtok == 2) { // alias command is only given a key in arguments
+        printf("alias: Unexpected number of parameters\n");
         continue;
       } else {
         char *key;

@@ -246,11 +246,13 @@ History load_history(char *filepath) {
       buffer[i++] = c;
     }
     if (c > 0) {
-      buffer[i++] = 0;
-      int num_tokens = 0;
-      Tokens tokens = input_tok(buffer, &num_tokens);
-      add_history(h, tokens);
-      free_tokens(tokens);
+      if (i != 0) {
+        buffer[i++] = 0;
+        int num_tokens = 0;
+        Tokens tokens = input_tok(buffer, &num_tokens);
+        add_history(h, tokens);
+        free_tokens(tokens);
+      }
     }
     free(buffer);
   }
