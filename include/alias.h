@@ -26,6 +26,7 @@ void free_alias_node(alias *node);
 void clear_aliases(Aliases aliases);
 void free_aliases(Aliases aliases);
 
+// alias transform strcut
 typedef struct at_node {
   char *key;
   struct at_node *next;

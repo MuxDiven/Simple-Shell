@@ -17,9 +17,10 @@ Tokens copy_tokens(Tokens tokens) {
   int i = 0;
   for (; tokens[i] != NULL; i++) {
     if (i >= buffer) {
+      // num_tok exceeds buffer value, double buffer and realloc
       buffer <<= 1;
       copy = (Tokens)realloc(copy, (buffer * sizeof(char *)) + 1);
-      if (!copy) {
+      if (!copy) { // failed to realloc
         free(copy);
         printf("memory allocation failed\n");
         return NULL;
@@ -40,7 +41,6 @@ void free_tokens(Tokens tokens) {
   tokens = NULL;
 }
 
-// logic works, should add token limit condition
 Tokens input_tok(char *input, int *num_tok) {
 
   int buffer = 16;
@@ -57,9 +57,10 @@ Tokens input_tok(char *input, int *num_tok) {
 
   while (token != NULL) {
     if (*num_tok >= buffer) {
+      // num_tok exceeds buffer value, double buffer and realloc
       buffer <<= 1;
       tokens = realloc(tokens, buffer * sizeof(char *));
-      if (!tokens) {
+      if (!tokens) { // failed to realloc
         free(tokens);
         printf("memory allocation failed\n");
         return NULL;
